@@ -8,24 +8,6 @@
       "role": "admin",
       "phone": "+20 100 123 4567",
       "avatarUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150"
-    },
-    {
-      "id": "usr-2",
-      "username": "ahmed",
-      "name": "Ahmed Kamel",
-      "email": "ahmed.kamel@siemens.com",
-      "role": "engineer",
-      "phone": "+20 111 987 6543",
-      "avatarUrl": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150"
-    },
-    {
-      "id": "usr-3",
-      "username": "sayed",
-      "name": "Sayed Abdelgawad",
-      "email": "sayed.abdelgawad@siemens.com",
-      "role": "admin",
-      "phone": "+20 122 345 6789",
-      "avatarUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150"
     }
   ],
   "stations": [
