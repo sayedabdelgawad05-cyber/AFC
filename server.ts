@@ -7,7 +7,7 @@ import { DEFAULT_USERS, DEFAULT_STATIONS, DEFAULT_RFIS, DEFAULT_NCRS, DEFAULT_PU
 
 dotenv.config();
 
-
+console.log('Gemini Key Exists:', !!process.env.GEMINI_API_KEY);
 
 const app = express();
 const PORT = 3000;
