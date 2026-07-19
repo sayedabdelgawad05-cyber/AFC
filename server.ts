@@ -62,20 +62,31 @@ loadDb();
 
 // Lazy Gemini API initialization helper
 let aiClient: GoogleGenAI | null = null;
+
 function getGeminiClient() {
   if (!aiClient) {
     const apiKey = process.env.GEMINI_API_KEY;
+
+    console.log('API Key Present:', !!apiKey);
+
     if (apiKey) {
-      aiClient = new GoogleGenAI({
-        apiKey: apiKey,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
+      try {
+        aiClient = new GoogleGenAI({
+          apiKey: apiKey,
+          httpOptions: {
+            headers: {
+              'User-Agent': 'aistudio-build',
+            }
           }
-        }
-      });
+        });
+
+        console.log('Gemini Client Created');
+      } catch (err) {
+        console.error('Gemini Client Error:', err);
+      }
     }
   }
+
   return aiClient;
 }
 
@@ -514,6 +525,7 @@ app.post('/api/ai/assistant', async (req, res) => {
   }
 
   const ai = getGeminiClient();
+console.log('AI Client Status:', ai ? 'READY' : 'NULL');
   
   // Format our live database into readable text chunks to inject as Gemini's real-time knowledge base
   const stationsSummary = db.stations.map(s => 
