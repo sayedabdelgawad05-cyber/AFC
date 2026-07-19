@@ -172,7 +172,7 @@ export default function Dashboard({ stations, rfis, ncrs, punches, onSelectStati
                       {st.nameEn}
                     </h4>
                     <p className="text-xs text-slate-500 mt-0.5 font-sans">
-                      {st.nameAr} • <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-200/60 border border-slate-300/40 rounded text-slate-700">{st.type}</span>
+                       • <span className="text-[10px] font-mono px-1.5 py-0.5 bg-slate-200/60 border border-slate-300/40 rounded text-slate-700">{st.type}</span>
                     </p>
                   </div>
                 </div>

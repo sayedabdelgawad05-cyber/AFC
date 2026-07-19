@@ -245,7 +245,7 @@ export default function ReportCreator({
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 border border-slate-200 p-4 rounded-xl text-xs font-sans">
               <div>
                 <span className="text-slate-400 block uppercase font-bold text-[9px] tracking-wider">Station Name</span>
-                <span className="text-slate-900 font-bold text-sm">{selectedStation?.nameEn} ({selectedStation?.nameAr})</span>
+                <span className="text-slate-900 font-bold text-sm">{selectedStation?.nameEn}</span>
               </div>
               <div>
                 <span className="text-slate-400 block uppercase font-bold text-[9px] tracking-wider">Document Type</span>
@@ -401,7 +401,7 @@ export default function ReportCreator({
                     className="w-full bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm focus:outline-none focus:border-teal-500 text-slate-700 font-bold"
                   >
                     {stations.map(st => (
-                      <option key={st.id} value={st.id}>{st.nameEn} ({st.nameAr})</option>
+                      <option key={st.id} value={st.id}>{st.nameEn}</option>
                     ))}
                   </select>
                 </div>
