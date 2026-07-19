@@ -612,7 +612,7 @@ if (!ai) {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash-lite',
+      model: 'gemini-2.5-pro',
       contents: chatContents,
       config: {
         systemInstruction: systemInstruction
