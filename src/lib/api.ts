@@ -592,4 +592,4 @@ askAssistant: async (messages: ChatMessage[], activeStationId?: string): Promise
     return `AI ERROR: ${String(e)}`;
   }
 },
-
+};
