@@ -61,9 +61,7 @@ export const api = {
       // Default offline users fallback if cache empty
       if (username.toLowerCase() === 'admin' || username.toLowerCase() === 'sayed' || username.toLowerCase() === 'ahmed') {
         const defaultMatched = [
-          { id: 'usr-3', username: 'sayed', name: 'Sayed Abdelgawad', email: 'sayed.abdelgawad@siemens.com', role: 'admin' as const },
-          { id: 'usr-1', username: 'admin', name: 'Moustafa El-Shenawy', email: 'm.elshenawy@siemens.com', role: 'admin' as const },
-          { id: 'usr-2', username: 'ahmed', name: 'Ahmed Kamel', email: 'ahmed.kamel@siemens.com', role: 'engineer' as const }
+          { id: 'usr-1', username: 'sayed', name: 'Sayed Abdelgawad', email: 'sayed.abdelgawad@siemens.com', role: 'admin' as const }
         ].find(u => u.username.toLowerCase() === username.toLowerCase());
         
         if (defaultMatched) {
@@ -203,7 +201,7 @@ export const api = {
     // Fallback Offline query
     const stations = getLocal<Station[]>(KEYS.STATIONS, []);
     const station = stations.find(s => s.id === id) || {
-      id, nameAr: 'محطة', nameEn: 'Station', type: 'Passenger', progress: 50,
+      id, nameEn: 'Station', type: 'Passenger', progress: 0,
       totalRFIs: 0, openRFIs: 0, totalNCRs: 0, openNCRs: 0, totalPunches: 0, openPunches: 0, delayedTasksCount: 0
     } as Station;
     const rfis = getLocal<RFI[]>(KEYS.RFIS, []).filter(r => r.stationId === id);
@@ -590,12 +588,6 @@ export const api = {
 
     // Local smart responder fallback if offline/no backend
     const lastMsg = messages[messages.length - 1]?.content || '';
-    if (lastMsg.includes('برج العرب') || lastMsg.toLowerCase().includes('borg')) {
-      return `محطة **برج العرب (Borg El Arab)**:\n- نسبة إنجاز تركيبات الـ AFC: **68%**.\n- هناك **3** استفسارات فنية (RFIs) مفتوحة.\n- يوجد **2** تقارير عدم مطابقة (NCRs) مفتوحة (منها تقرير HSR-AFC-NCR-BEA-001 بخصوص حرارة غرفة خادم الـ AFC).\n- يوجد **6** بنود ملاحظات (Punches) مفتوحة.`;
-    }
-    if (lastMsg.includes('العلمين') || lastMsg.toLowerCase().includes('alamein')) {
-      return `محطة **العلمين (El Alamein)**:\n- نسبة إنجاز تركيبات الـ AFC: **55%**.\n- الاستفسارات المفتوحة (RFIs): **2**.\n- تقارير عدم المطابقة المفتوحة (NCRs): **1**.\n- بنود الملاحظات المفتوحة (Punches): **4** مفتوحة.`;
-    }
-    return `مرحباً بك مهندس سيمنز. أنا المساعد الذكي لمشروع القطار الكهربائي السريع بمصر. لم تتوفر استجابة مباشرة من الخادم الفعلي، ولكن بناءً على البيانات المخزنة محلياً:\n\n- إجمالي المحطات النشطة: **6** محطات.\n- متوسط تقدم الأعمال الإجمالي: **48.8%**.\n- إجمالي تقارير الـ NCRs المفتوحة: **6** تقارير.\n- يرجى التحقق من اتصالك بالإنترنت وتفعيل مفتاح الـ API للوصول لكامل الذكاء الفوري.`;
-  }
+    return `Welcome to the Egypt HSR AFC Assistant. No live AI response is currently available. Please verify backend connectivity and Gemini API configuration.`;
+}
 };
