@@ -499,7 +499,7 @@ export default function ReportCreator({
               {/* Section 1 */}
               <div>
                 <label className="block text-xs font-extrabold text-teal-600 uppercase tracking-wide mb-1.5">
-                  1. Technical Notes / الملاحظات الفنية والتركيبية
+                  1. Technical Notes
                 </label>
                 <textarea
                   rows={3}
