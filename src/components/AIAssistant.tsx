@@ -22,7 +22,7 @@ export default function AIAssistant({ stations, activeStationId }: AIAssistantPr
     {
       id: 'welcome',
       role: 'model',
-      content: 'أهلاً بك مهندس سيمنز في المساعد الهندسي الذكي لمشروع القطار السريع بمصر.\n\nيمكنك سؤالي باللغة العربية أو الإنجليزية عن أي تفاصيل تخص المحطات، أو الاستفسارات المفتوحة (RFIs)، أو تقارير عدم المطابقة (NCRs)، أو لإنشاء تقرير زيارة ميداني فوري!\n\nWelcome! I am your Siemens Mobility Intelligent Engineering Assistant. Ask me about station progress, outstanding NCRs, RFIs, or ask me to draft site reports.',
+      content: 'Welcome to the Siemens Mobility Engineering Assistant. Ask about stations, RFIs, NCRs, Punch Items, project progress, or request a site inspection report.',
       timestamp: new Date().toLocaleTimeString()
     }
   ]);
@@ -32,12 +32,13 @@ export default function AIAssistant({ stations, activeStationId }: AIAssistantPr
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Quick prompt templates
-  const QUICK_PROMPTS = [
-    { text: 'مشاكل برج العرب المفتوحة؟', label: 'Borg El Arab Issues' },
-    { text: 'ما هي الـ NCRs غير المغلقة؟', label: 'Open NCRs' },
-    { text: 'أنشئ تقرير زيارة لمحطة العلمين', label: 'Draft Alamein Report' },
-    { text: 'الأعمال المتأخرة هذا الأسبوع؟', label: 'Delayed Tasks' }
-  ];
+  
+const QUICK_PROMPTS = [
+  { text: 'Show open issues for the current station', label: 'Station Issues' },
+  { text: 'Show all open NCRs', label: 'Open NCRs' },
+  { text: 'Create a site inspection report', label: 'Draft Report' },
+  { text: 'Show delayed activities', label: 'Delayed Tasks' }
+];
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -72,7 +73,7 @@ export default function AIAssistant({ stations, activeStationId }: AIAssistantPr
       const errMsg: ChatMessage = {
         id: 'msg-err-' + Date.now(),
         role: 'model',
-        content: 'عذراً، حدث خطأ أثناء الاتصال بنموذج الذكاء الاصطناعي. يرجى تكرار المحاولة.\n\nConnection error occurred. Please try again.',
+        content: 'Unable to connect to the AI service. Please try again later.',
         timestamp: new Date().toLocaleTimeString()
       };
       setMessages(prev => [...prev, errMsg]);
@@ -94,7 +95,7 @@ export default function AIAssistant({ stations, activeStationId }: AIAssistantPr
             <h3 className="text-sm font-extrabold text-slate-900 tracking-wide uppercase flex items-center gap-1.5">
               <span>Siemens Engineering AI</span>
             </h3>
-            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Dual-Language Project Oracle & Advisor</p>
+            <p className="text-[11px] text-slate-500 mt-0.5 font-medium">Engineering Project Assistant</p>
           </div>
         </div>
 
@@ -164,7 +165,7 @@ export default function AIAssistant({ stations, activeStationId }: AIAssistantPr
           onKeyDown={(e) => {
             if (e.key === 'Enter') handleSend(input);
           }}
-          placeholder="Ask a question or describe an issue... / اسأل المساعد الهندسي..."
+          placeholder="Ask a question or describe an issue..."
           disabled={loading}
           className="flex-1 bg-slate-50 border border-slate-200 text-sm px-4 py-3 rounded-xl text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/30 transition-all font-medium"
         />

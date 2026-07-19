@@ -394,7 +394,7 @@ export default function ReportCreator({
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Station Name / المحطة</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Station Name  </label>
                   <select
                     value={stationId}
                     onChange={(e) => setStationId(e.target.value)}
@@ -419,7 +419,7 @@ export default function ReportCreator({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Document Title / العنوان</label>
+                  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">Document Title  </label>
                   <input
                     type="text"
                     value={title}
@@ -445,7 +445,7 @@ export default function ReportCreator({
             <div className="bg-white border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm">
               <div>
                 <h3 className="text-sm font-extrabold text-slate-900 tracking-wide uppercase">
-                  Field Comments & Raw Notes / الملاحظات الفنية للمهندس
+                  Field Comments & Raw Notes 
                 </h3>
                 <p className="text-xs text-slate-500 mt-1 font-medium">
                   Type or dictate your field observations in Arabic, English, or mixed. Click the Sparkles button below to generate a Siemens-standard formal report.
@@ -456,7 +456,7 @@ export default function ReportCreator({
                 rows={4}
                 value={notesRaw}
                 onChange={(e) => setNotesRaw(e.target.value)}
-                placeholder="مثال: أنا حالياً في محطة برج العرب وبوابات العبور راكبة بالكامل بس في كابلات مكشوفة عند بوابة 3 محتاجة تغطية ومحاذاة الزجاج مش مظبوطة وبوابات التذاكر شغالة تمام."
+                placeholder="Example: AFC gates have been installed and powered successfully. Exposed cables were observed near Gate No. 3 and require proper containment. Ticket vending machines are operational. Glass panel alignment should be adjusted before final inspection."
                 className="w-full bg-slate-50 border border-slate-200 px-3.5 py-3 rounded-xl text-sm focus:outline-none focus:border-teal-500 text-slate-900 font-medium placeholder:text-slate-400 focus:ring-1 focus:ring-teal-500/30 transition-all leading-relaxed"
               />
 
@@ -512,7 +512,7 @@ export default function ReportCreator({
               {/* Section 2 */}
               <div>
                 <label className="block text-xs font-extrabold text-teal-600 uppercase tracking-wide mb-1.5">
-                  2. Identified Issues & Non-Conformances / العيوب والمشاكل المرصودة
+                  2. Identified Issues & Non-Conformances 
                 </label>
                 <textarea
                   rows={3}
@@ -525,7 +525,7 @@ export default function ReportCreator({
               {/* Section 3 */}
               <div>
                 <label className="block text-xs font-extrabold text-teal-600 uppercase tracking-wide mb-1.5">
-                  3. Corrective Actions Required / الإجراءات التصحيحية المطلوبة
+                  3. Corrective Actions Required 
                 </label>
                 <textarea
                   rows={3}
@@ -538,7 +538,7 @@ export default function ReportCreator({
               {/* Section 4 */}
               <div>
                 <label className="block text-xs font-extrabold text-teal-600 uppercase tracking-wide mb-1.5">
-                  4. Preventative Recommendations / التوصيات الهندسية الوقائية
+                  4. Preventative Recommendations 
                 </label>
                 <textarea
                   rows={2}
@@ -551,7 +551,7 @@ export default function ReportCreator({
               {/* Section 5 */}
               <div>
                 <label className="block text-xs font-extrabold text-teal-600 uppercase tracking-wide mb-1.5">
-                  5. Follow-up Inspection Plan / خطة المتابعة والتفتيش القادم
+                  5. Follow-up Inspection Plan 
                 </label>
                 <textarea
                   rows={2}
