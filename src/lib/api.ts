@@ -571,21 +571,25 @@ export const api = {
     };
   },
 
-  askAssistant: async (messages: ChatMessage[], activeStationId?: string): Promise<string> => {
-    try {
-      const res = await fetch(`${API_BASE}/ai/assistant`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages, activeStationId })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        return data.text;
-      }
-    } 
-catch (e) {
-  console.error('AI assistant endpoint error', e);
+ 
+askAssistant: async (messages: ChatMessage[], activeStationId?: string): Promise<string> => {
+  try {
+    const res = await fetch(`${API_BASE}/ai/assistant`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, activeStationId })
+    });
 
-  return `AI ERROR: ${String(e)}`;
-}
-};
+    if (res.ok) {
+      const data = await res.json();
+      return data.text;
+    }
+
+    return `SERVER ERROR: ${res.status}`;
+  } catch (e) {
+    console.error('AI assistant endpoint error', e);
+
+    return `AI ERROR: ${String(e)}`;
+  }
+},
+
