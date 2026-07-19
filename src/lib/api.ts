@@ -582,12 +582,10 @@ export const api = {
         const data = await res.json();
         return data.text;
       }
-    } catch (e) {
-      console.error('AI assistant endpoint error, fallback to mock response', e);
-    }
+    } 
+catch (e) {
+  console.error('AI assistant endpoint error', e);
 
-    // Local smart responder fallback if offline/no backend
-    const lastMsg = messages[messages.length - 1]?.content || '';
-    return `Welcome to the Egypt HSR AFC Assistant. No live AI response is currently available. Please verify backend connectivity and Gemini API configuration.`;
+  return `AI ERROR: ${String(e)}`;
 }
 };
