@@ -517,7 +517,7 @@ app.post('/api/ai/assistant', async (req, res) => {
   
   // Format our live database into readable text chunks to inject as Gemini's real-time knowledge base
   const stationsSummary = db.stations.map(s => 
-    `- Station: ${s.nameEn} (${s.nameAr}), Progress: ${s.progress}%, Open RFIs: ${s.openRFIs}/${s.totalRFIs}, Open NCRs: ${s.openNCRs}/${s.totalNCRs}, Open Punch: ${s.openPunches}/${s.totalPunches}, Delayed: ${s.delayedTasksCount}`
+    `- Station: ${s.nameEn}, Progress: ${s.progress}%, Open RFIs: ${s.openRFIs}/${s.totalRFIs}, Open NCRs: ${s.openNCRs}/${s.totalNCRs}, Open Punch: ${s.openPunches}/${s.totalPunches}, Delayed: ${s.delayedTasksCount}`
   ).join('\n');
 
   const openRfis = db.rfis.filter(r => r.status === 'Open').map(r => 
@@ -536,13 +536,26 @@ app.post('/api/ai/assistant', async (req, res) => {
   if (activeStationId) {
     const active = db.stations.find(s => s.id === activeStationId);
     if (active) {
-      activeStationContext = `The user is currently viewing the station details of "${active.nameEn}" (${active.nameAr}). Keep this in mind as the default context of the inquiry unless specified otherwise.`;
+      activeStationContext = `The user is currently viewing the station details of "${active.nameEn}". Keep this in mind as the default context of the inquiry unless specified otherwise.`;
     }
   }
 
   const systemInstruction = `You are the Egypt High Speed Rail (HSR) Engineering AI Assistant, designed specifically for Siemens Mobility Egypt's AFC (Automatic Fare Collection) and Site Inspection teams.
 Your tone must be highly professional, helpful, accurate, and engineering-focused.
-You are bilingual: you understand Arabic, Franco-Arab, and English perfectly. You should respond in the language requested by the user, or default to a elegant professional Arabic/English mix suitable for Egyptian engineers if they use both. When summarizing, use structured bullet points and professional terms (NCR, RFI, Punch List, TVM, Gate Barrier, UPS).
+You are bilingual: you understand Arabic, Franco-Arab, and English perfectly. 
+You must always respond in the same language used by the user.
+
+Arabic question → Arabic answer.
+English question → English answer.
+
+Do not mix Arabic and English unless the user mixes both languages first.
+Keep engineering terminology such as AFC, RFI, NCR, Punch List, TVM, SC, UPS and Gate Array in English.
+
+lways answer using the live database data provided in this prompt.
+
+If requested information does not exist in the database, clearly state that no matching records were found.
+
+Never invent stations, RFIs, NCRs, Punch Items, reports, progress percentages, users, or statistics.When summarizing, use structured bullet points and professional terms (NCR, RFI, Punch List, TVM, Gate Barrier, UPS).
 
 Here is the exact real-time live database state of the project. ALWAYS answer using this factual data and do NOT make up RFIs, NCRs, or stations:
 
@@ -560,8 +573,16 @@ ${openPunches || 'No open Punch List items.'}
 
 ${activeStationContext}
 
-If the user asks to "create a visit report" or "أنشئ تقرير زيارة" for a specific station, formulate a professional template with Technical Notes, Issues, and Recommendations based on that station's open data, and explain that they can save it in the Report Creator module.
-Always refer to actual Egyptian high-speed rail stations in our database (Borg El Arab, El Alamein, Ain Sokhna, October Depot, Alexandria, Marsa Matrouh) and explain their specific stats.`;
+
+If the user asks to create a site inspection report, generate a professional Siemens-style report using the actual station data available in the live database.
+
+Always use the current stations stored in the database.
+Never assume station names.
+Use only real-time project data from RFIs, NCRs, Punch Items, Reports, and Stations.
+
+Respond in the same language used by the user.
+If the user writes in Arabic, respond in Arabic.
+If the user writes in English, respond in English.`;
 
   // Process message history for Gemini chat format
   const chatContents = messages.map((m: any) => ({
@@ -569,23 +590,13 @@ Always refer to actual Egyptian high-speed rail stations in our database (Borg E
     parts: [{ text: m.content }]
   }));
 
-  if (!ai) {
-    // Elegant offline/unconfigured fallback
-    const lastUserMessage = messages[messages.length - 1]?.content || '';
-    let fallbackText = `أهلاً بك مهندس سيمنز. يرجى تفعيل مفتاح الـ API الخاص بـ Gemini في الإعدادات لتفعيل التحليل الفوري للمشروع بالذكاء الاصطناعي.\n\nكإجابة مبدئية: بناءً على قاعدة البيانات المحلية لمشروع القطار السريع:\n`;
-    
-    if (lastUserMessage.includes('برج العرب') || lastUserMessage.toLowerCase().includes('borg')) {
-      const b = db.stations.find(s => s.id === 'st-bea')!;
-      fallbackText += `- **محطة برج العرب**: نسبة الإنجاز تبلغ **${b.progress}%**. يوجد حالياً **${b.openRFIs} استفسارات فنية (RFIs)** مفتوحة و **${b.openNCRs} تقارير عدم مطابقة (NCRs)** مفتوحة.\n- أهم المشاكل المفتوحة: NCR رقم ${db.ncrs.find(n => n.stationId === 'st-bea' && n.status === 'Open')?.number || 'HSR-AFC-NCR-BEA-001'} بخصوص حرارة غرفة خادم الـ AFC.\n- بنود الملاحظات المفتوحة (Punch list): عددها ${b.openPunches} ملاحظة (مثل محاذاة زجاج البوابات وبوابة Gate-03).`;
-    } else if (lastUserMessage.includes('العلمين') || lastUserMessage.toLowerCase().includes('alamein')) {
-      const e = db.stations.find(s => s.id === 'st-eal')!;
-      fallbackText += `- **محطة العلمين**: نسبة الإنجاز تبلغ **${e.progress}%**. يوجد **${e.openRFIs} RFIs** مفتوحة و **${e.openNCRs} NCR** مفتوحة.\n- البنود المتأخرة والملاحظات: ${e.openPunches} ملاحظات Punch list (مثل سيلكون بوابات العبور والوصلة الأرضية لكابينة الـ UPS).`;
-    } else {
-      fallbackText += `- إجمالي عدد المحطات النشطة: **${db.stations.length}** محطة.\n- المحطة الأكثر تقدماً: **برج العرب (${db.stations.find(s => s.id === 'st-bea')?.progress}%)**.\n- إجمالي الـ NCRs المفتوحة في المشروع: **${db.ncrs.filter(n => n.status === 'Open').length}** تقرير عدم مطابقة.\n- إجمالي الـ Punch Items المفتوحة: **${db.punches.filter(p => p.status === 'Open').length}** ملاحظة فنية.`;
-    }
-    
-    return res.json({ success: true, text: fallbackText });
-  }
+  
+if (!ai) {
+  return res.json({
+    success: true,
+    text: 'AI service is currently unavailable. Please configure the Gemini API key in the server settings.'
+  });
+}
 
   try {
     const response = await ai.models.generateContent({
