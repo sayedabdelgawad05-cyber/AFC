@@ -264,7 +264,8 @@ onAddUser({
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
 
-button
+
+<button
   onClick={() => {
     if (window.confirm(`Reset password for ${u.name}?`)) {
       onUpdateUser(u.id, {
@@ -277,6 +278,7 @@ button
 >
   Reset
 </button>
+
                     <button
                       onClick={() => onDeleteUser(u.id)}
                       disabled={u.id === 'usr-1' || u.id === 'usr-3'} // Guard primary admins
