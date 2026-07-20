@@ -41,8 +41,9 @@ export default function AdminPanel({
   const [username, setUsername] = useState('');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [role, setRole] = useState<'admin' | 'engineer'>('engineer');
+const [phone, setPhone] = useState('');
+const [password, setPassword] = useState('');
+const [role, setRole] = useState<'admin' | 'engineer'>('engineer');
 
   const [uiError, setUiError] = useState('');
   const [uiSuccess, setUiSuccess] = useState('');
@@ -52,24 +53,34 @@ export default function AdminPanel({
   const [rawCsvInput, setRawCsvInput] = useState('');
   const [importSuccess, setImportSuccess] = useState('');
 
-  const resetUserForm = () => {
-    setUsername('');
-    setName('');
-    setEmail('');
-    setPhone('');
-    setRole('engineer');
-    setEditingUser(null);
-    setUiError('');
-    setUiSuccess('');
-    setShowAddUserModal(false);
-  };
+
+const resetUserForm = () => {
+  setUsername('');
+  setName('');
+  setEmail('');
+  setPhone('');
+  setPassword('');
+  setRole('engineer');
+  setEditingUser(null);
+  setUiError('');
+  setUiSuccess('');
+  setShowAddUserModal(false);
+};
+
 
   const handleCreateOrUpdateUser = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!username.trim() || !name.trim() || !email.trim()) {
-      setUiError('Username, name, and email are required.');
-      return;
-    }
+    
+if (
+  !username.trim() ||
+  !name.trim() ||
+  !email.trim() ||
+  (!editingUser && !password.trim())
+) {
+  setUiError('Username, password, name, and email are required.');
+  return;
+}
+
 
     if (editingUser) {
       onUpdateUser(editingUser.id, {
@@ -89,14 +100,16 @@ export default function AdminPanel({
         return;
       }
 
-      onAddUser({
-        id: 'usr-' + Date.now(),
-        username,
-        name,
-        email,
-        phone,
-        role
-      });
+      
+onAddUser({
+  id: 'usr-' + Date.now(),
+  username,
+  password,
+  name,
+  email,
+  phone,
+  role
+});
       setUiSuccess('New user added successfully.');
       setTimeout(() => resetUserForm(), 1000);
     }
@@ -414,6 +427,21 @@ export default function AdminPanel({
                   className="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 text-slate-900 font-medium placeholder:text-slate-400"
                 />
               </div>
+
+<div>
+  <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5">
+    Password
+  </label>
+
+  <input
+    type="password"
+    required={!editingUser}
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    placeholder="Enter password"
+    className="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm focus:outline-none focus:border-teal-500 text-slate-900 font-medium placeholder:text-slate-400"
+  />
+</div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
