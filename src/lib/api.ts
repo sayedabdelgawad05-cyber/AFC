@@ -48,29 +48,35 @@ export const api = {
         }
       }
       
-      // Offline fallback: check from cached users
-      const users = getLocal<User[]>(KEYS.USERS, []);
-      const matched = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-      if (matched) {
-        const userWithoutPassword = { ...matched };
-        delete userWithoutPassword.password;
-        setLocal(KEYS.CURRENT_USER, userWithoutPassword);
-        return { success: true, user: userWithoutPassword };
-      }
-      
-      // Default offline users fallback if cache empty
-      if (username.toLowerCase() === 'admin' || username.toLowerCase() === 'sayed' || username.toLowerCase() === 'ahmed') {
-        const defaultMatched = [
-          { id: 'usr-1', username: 'sayed', name: 'Sayed Abdelgawad', email: 'sayed.abdelgawad@siemens.com', role: 'admin' as const }
-        ].find(u => u.username.toLowerCase() === username.toLowerCase());
-        
-        if (defaultMatched) {
-          setLocal(KEYS.CURRENT_USER, defaultMatched);
-          return { success: true, user: defaultMatched };
-        }
-      }
 
-      return { success: false, message: 'Invalid credentials or no cached account for offline use.' };
+
+// Offline fallback: check from cached users
+
+const users = getLocal<User[]>(KEYS.USERS, []);
+
+const matched = users.find(
+  u =>
+    u.username === username &&
+    u.password === passwordString
+);
+
+if (matched) {
+  const userWithoutPassword = { ...matched };
+
+  delete userWithoutPassword.password;
+
+  setLocal(KEYS.CURRENT_USER, userWithoutPassword);
+
+  return {
+    success: true,
+    user: userWithoutPassword
+  };
+}
+
+return {
+  success: false,
+  message: 'Invalid credentials or no cached account for offline use.'
+};
     } catch (e) {
       console.error('Login error, using offline simulation', e);
       return { success: false, message: 'Connection error during authentication.' };
