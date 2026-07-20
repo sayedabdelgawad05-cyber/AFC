@@ -630,6 +630,20 @@ if (!ai) {
 // VITE CLIENT MIDDLEWARE & SERVER BOOT
 // ----------------------------------------
 
+app.get('/api/models', async (req, res) => {
+  try {
+    const ai = getGeminiClient();
+
+    const models = await ai.models.list();
+
+    res.json(models);
+  } catch (error: any) {
+    res.status(500).json({
+      error: error.message
+    });
+  }
+});
+
 async function start() {
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
