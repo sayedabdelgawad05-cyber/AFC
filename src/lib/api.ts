@@ -46,6 +46,10 @@ export const api = {
             return data;
           }
         }
+
+const errorData = await res.json().catch(() => null);
+console.log('LOGIN RESPONSE:', res.status, errorData);
+
       }
       
 
