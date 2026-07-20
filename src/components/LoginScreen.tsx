@@ -37,22 +37,7 @@ export default function LoginScreen({ onLoginSuccess }: LoginProps) {
     }
   };
 
-  const handleQuickLogin = async (usr: string) => {
-    setIsLoading(true);
-    setError('');
-    try {
-      const res = await api.login(usr, 'siemens123');
-      if (res.success && res.user) {
-        onLoginSuccess(res.user);
-      } else {
-        setError(res.message || 'Quick login failed.');
-      }
-    } catch (err) {
-      setError('System connection error.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+
 
   return (
     <div id="login_screen" className="min-h-screen bg-slate-950 flex flex-col justify-center items-center p-4 relative overflow-hidden font-sans">
@@ -127,28 +112,6 @@ export default function LoginScreen({ onLoginSuccess }: LoginProps) {
             )}
           </button>
         </form>
-
-        <div className="mt-8 border-t border-slate-800/80 pt-6">
-          <p className="text-center text-xs text-slate-500 mb-4">Quick login for project testing:</p>
-          <div className="grid grid-cols-2 gap-2.5">
-            <button
-              onClick={() => handleQuickLogin('sayed')}
-              disabled={isLoading}
-              className="px-3 py-2.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 rounded-xl text-xs font-medium transition-all text-left flex flex-col justify-between"
-            >
-              <span className="text-teal-400 font-bold">Sayed Abdelgawad</span>
-              <span className="text-[10px] text-slate-500 mt-1">Role: Administrator</span>
-            </button>
-            <button
-              onClick={() => handleQuickLogin('ahmed')}
-              disabled={isLoading}
-              className="px-3 py-2.5 bg-slate-950 hover:bg-slate-800 border border-slate-800 hover:border-slate-700 text-slate-200 rounded-xl text-xs font-medium transition-all text-left flex flex-col justify-between"
-            >
-              <span className="text-teal-400 font-bold">Ahmed Kamel</span>
-              <span className="text-[10px] text-slate-500 mt-1">Role: Engineer</span>
-            </button>
-          </div>
-        </div>
 
         <div className="mt-6 text-center">
           <p className="text-[10px] text-slate-600">Siemens Mobility Middle East & Africa. All Rights Reserved © 2026</p>
