@@ -46,7 +46,7 @@ function saveDb() {
 }
 
 
-unction loadDb() {
+function loadDb() {
   try {
     console.log('DB FILE PATH:', DB_FILE_PATH);
 
