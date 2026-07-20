@@ -1,14 +1,15 @@
+
 {
-  "users": [
-    {
-      "id": "usr-1",
-      "username": "sayed",
-      "name": "Sayed Abdelgawad",
-      "email": "yed.abdelgawad@siemens.com",
-      "role": "admin",
-      "phone": "+20 100 123 4567",
-      "avatarUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150"
-    }
+  "id": "usr-1",
+  "username": "#100001",
+  "password": "#123456",
+  "name": "Sayed Abdelgawad",
+  "email": "yed.abdelgawad@siemens.com",
+  "role": "admin",
+  "phone": "+20 1204649089",
+  "avatarUrl": "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150"
+}
+
   ],
   "stations": [
    

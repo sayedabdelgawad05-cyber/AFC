@@ -116,12 +116,22 @@ function updateStationKPIs() {
 
 // Auth API
 app.post('/api/auth/login', (req, res) => {
-  const { username, password } = req.body;
-  // Standard development/simulated credentials
-  const user = db.users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  
-  if (user) {
-    // In a real application, bcrypt would verify passwords. Here, we match simple usernames.
+ 
+const { username, password } = req.body;
+
+const user = db.users.find(
+  u =>
+    u.username === username &&
+    u.password === password
+);
+
+if (!user) {
+  return res.status(401).json({
+    success: false,
+    message: 'Invalid username or password'
+  });
+}
+
     res.json({
       success: true,
       user: {
@@ -134,9 +144,7 @@ app.post('/api/auth/login', (req, res) => {
         avatarUrl: user.avatarUrl || ''
       }
     });
-  } else {
-    res.status(401).json({ success: false, message: 'Invalid username or credentials.' });
-  }
+ 
 });
 
 // User Management APIs
