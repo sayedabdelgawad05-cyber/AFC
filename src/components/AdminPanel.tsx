@@ -263,6 +263,20 @@ onAddUser({
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                     </button>
+
+button
+  onClick={() => {
+    if (window.confirm(`Reset password for ${u.name}?`)) {
+      onUpdateUser(u.id, {
+        password: '123456'
+      });
+    }
+  }}
+  className="p-1.5 bg-white hover:bg-slate-50 text-blue-600 border border-slate-200 rounded-lg shadow-sm transition-colors"
+  title="Reset Password"
+>
+  Reset
+</button>
                     <button
                       onClick={() => onDeleteUser(u.id)}
                       disabled={u.id === 'usr-1' || u.id === 'usr-3'} // Guard primary admins
