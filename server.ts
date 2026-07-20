@@ -45,19 +45,27 @@ function saveDb() {
   }
 }
 
-function loadDb() {
+
+unction loadDb() {
   try {
+    console.log('DB FILE PATH:', DB_FILE_PATH);
+
     if (fs.existsSync(DB_FILE_PATH)) {
       const data = fs.readFileSync(DB_FILE_PATH, 'utf-8');
+
+      console.log('RAW DB FILE:', data);
+
       db = JSON.parse(data);
+
+      console.log('DB AFTER LOAD:', db);
     } else {
+      console.log('DB FILE NOT FOUND - CREATING NEW ONE');
       saveDb();
     }
   } catch (error) {
     console.error('Failed to load db.json, using defaults:', error);
   }
 }
-
 loadDb();
 
 // Lazy Gemini API initialization helper
