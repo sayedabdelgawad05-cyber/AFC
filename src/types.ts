@@ -96,3 +96,50 @@ export interface ChatMessage {
   content: string;
   timestamp: string;
 }
+
+export type DocumentCategory =
+  | 'Architecture'
+  | 'Structure'
+  | 'Builders Work'
+  | 'AFC'
+  | 'Civil'
+  | 'MEP'
+  | 'Testing & Commissioning'
+  | 'RFI'
+  | 'NCR'
+  | 'Observation'
+  | 'Method Statement';
+
+export interface ProjectDocument {
+  id: string;
+
+  name: string;
+
+  category: DocumentCategory;
+
+  fileType: 'pdf' | 'excel' | 'word';
+
+  stationId?: string;
+
+  uploadedBy: string;
+
+  uploadDate: string;
+
+  status: 'Open' | 'Closed' | 'Under Review';
+
+  description?: string;
+
+  fileUrl?: string;
+
+  aiSummary?: string;
+
+  aiFindings?: string[];
+
+  aiActions?: string[];
+
+  aiRFIs?: string[];
+
+  aiNCRs?: string[];
+
+  aiObservations?: string[];
+}

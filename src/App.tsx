@@ -10,6 +10,7 @@ import ReportCreator from './components/ReportCreator';
 import ReportsArchive from './components/ReportsArchive';
 import AdminPanel from './components/AdminPanel';
 import AIAssistant from './components/AIAssistant';
+import DocumentControl from './components/DocumentControl';
 
 // Icons
 import { 
@@ -29,7 +30,15 @@ import {
   RefreshCw
 } from 'lucide-react';
 
-type NavTab = 'dashboard' | 'station' | 'creator' | 'archive' | 'assistant' | 'admin';
+
+type NavTab =
+  | 'dashboard'
+  | 'station'
+  | 'creator'
+  | 'archive'
+  | 'assistant'
+  | 'documents'
+  | 'admin';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -235,13 +244,15 @@ export default function App() {
 
   const activeStation = stations.find(s => s.id === activeStationId) || stations[0];
 
-  const sidebarItems = [
-    { id: 'dashboard', label: 'Project Dashboard', icon: Activity },
-    { id: 'station', label: 'Station Explorer', icon: MapPin },
-    { id: 'creator', label: 'Report Creator', icon: FileText, action: handleCreateNewReport },
-    { id: 'archive', label: 'Reports Archive', icon: History },
-    { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
-  ];
+  
+const sidebarItems = [
+  { id: 'dashboard', label: 'Project Dashboard', icon: Activity },
+  { id: 'station', label: 'Station Explorer', icon: MapPin },
+  { id: 'creator', label: 'Report Creator', icon: FileText, action: handleCreateNewReport },
+  { id: 'archive', label: 'Reports Archive', icon: History },
+  { id: 'documents', label: 'Document Control', icon: FileText },
+  { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
+];
 
   // Admin section restriction
   if (currentUser.role === 'admin') {
@@ -418,6 +429,10 @@ export default function App() {
                 onRefresh={loadProjectData}
               />
             )}
+
+{activeTab === 'documents' && (
+  <DocumentControl />
+)}
 
             {activeTab === 'assistant' && (
               <AIAssistant 
