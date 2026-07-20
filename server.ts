@@ -417,7 +417,7 @@ Raw Engineer Notes:
 "${notesRaw}"`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-flash-latest',
       contents: userPrompt,
       config: {
         systemInstruction: systemPrompt,
@@ -487,7 +487,7 @@ Return a valid JSON object matching this schema:
     const userPromptText = `Engineer site comments: "${userNotes || 'None'}"`;
 
     const response = await ai.models.generateContent({
-      model: 'gemini-3.5-flash',
+      model: 'gemini-flash-latest',
       contents: {
         parts: [
           imagePart,
@@ -612,7 +612,7 @@ if (!ai) {
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash',
+      model: 'gemini-flash-latest',
       contents: chatContents,
       config: {
         systemInstruction: systemInstruction
