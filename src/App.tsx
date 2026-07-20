@@ -431,9 +431,10 @@ const sidebarItems = [
             )}
 
 {activeTab === 'documents' && (
-  <DocumentControl />
+  <div style={{ color: 'black', padding: '20px' }}>
+    TEST DOCUMENT PAGE
+  </div>
 )}
-
             {activeTab === 'assistant' && (
               <AIAssistant 
                 stations={stations}
