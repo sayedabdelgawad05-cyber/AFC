@@ -119,6 +119,9 @@ app.post('/api/auth/login', (req, res) => {
  
 const { username, password } = req.body;
 
+console.log('LOGIN REQUEST:', username, password);
+console.log('USERS IN DB:', db.users);
+
 const user = db.users.find(
   u =>
     u.username === username &&
