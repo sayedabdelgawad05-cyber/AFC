@@ -6,6 +6,8 @@ export default function DocumentControl() {
   const [documentType, setDocumentType] = useState('Architecture');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
 const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
+const [deleteReason, setDeleteReason] = useState('');
+const [documentToDelete, setDocumentToDelete] = useState<any | null>(null);
 const [searchTerm, setSearchTerm] = useState('');
 useEffect(() => {
   api.getDocuments().then((docs) => {
@@ -167,11 +169,12 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
     Download
   </button>
 
-  <button
-    className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm"
-  >
-    Delete
-  </button>
+<button
+  onClick={() => setDocumentToDelete(doc)}
+  className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm"
+>
+  Delete
+</button>
 
 </div>
   </div>
@@ -210,6 +213,51 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
           </button>
         </div>
       )}
+{documentToDelete && (
+  <div className="bg-white border border-red-200 rounded-3xl p-6 mt-6">
+    <h3 className="text-lg font-bold text-red-600 mb-4">
+      Delete Document
+    </h3>
+
+    <p className="mb-3">
+      Please enter deletion reason:
+    </p>
+
+    <input
+      type="text"
+      value={deleteReason}
+      onChange={(e) => setDeleteReason(e.target.value)}
+      placeholder="Reason for deletion..."
+      className="w-full border border-slate-300 rounded-xl px-3 py-2"
+    />
+
+    <div className="flex gap-2 mt-4">
+
+      <button
+        onClick={() => {
+          setDeleteReason('');
+          setDocumentToDelete(null);
+        }}
+        className="px-4 py-2 bg-slate-500 text-white rounded-lg"
+      >
+        Cancel
+      </button>
+
+      <button
+        onClick={() => {
+          alert(`Deletion Reason: ${deleteReason}`);
+
+          setDeleteReason('');
+          setDocumentToDelete(null);
+        }}
+        className="px-4 py-2 bg-red-600 text-white rounded-lg"
+      >
+        Confirm Delete
+      </button>
+
+    </div>
+  </div>
+)}
     </div>
   );
 }
