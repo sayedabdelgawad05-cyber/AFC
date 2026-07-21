@@ -182,22 +182,18 @@ export default function StationExplorer({
           </button>
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="p-1.5 bg-teal-50 text-teal-600 rounded-lg border border-teal-100">
-                <MapPin className="w-5 h-5" />
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{station.nameEn}</h2>
-              <span className="text-sm font-semibold text-slate-500 font-sans">({station.type})</span>
-            </div>
-           <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
-  <span>{station.type} Installation Base</span>
-  <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-  <span>
-    Overall Progress:
-    <strong className="text-teal-600 font-bold">
-      {station.progress}%
-    </strong>
+  <span className="p-1.5 bg-teal-50 text-teal-600 rounded-lg border border-teal-100">
+    <MapPin className="w-5 h-5" />
   </span>
-</p>
+
+  <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+    {station.nameEn}
+  </h2>
+
+  <span className="text-sm font-semibold text-slate-500 font-sans">
+    ({station.type})
+  </span>
+</div>
 
 <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
   <span>{station.type} Installation Base</span>
@@ -208,7 +204,8 @@ export default function StationExplorer({
       {station.progress}%
     </strong>
   </span>
-</p>          </div>
+</p>
+          </div>
         </div>
 
         {/* Progress bar in header */}
