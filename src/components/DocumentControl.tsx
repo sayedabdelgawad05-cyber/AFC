@@ -5,7 +5,7 @@ export default function DocumentControl() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState('Architecture');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
-
+const [searchTerm, setSearchTerm] = useState('');
 useEffect(() => {
   api.getDocuments().then((docs) => {
     setUploadedFiles(docs);
@@ -105,14 +105,27 @@ setSelectedFile(null);
         <h3 className="text-lg font-bold mb-4">
           Uploaded Documents
         </h3>
-
+<div className="mb-4">
+  <input
+    type="text"
+    placeholder="Search documents..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+</div>
         {uploadedFiles.length === 0 ? (
           <p className="text-slate-500">
             No uploaded documents yet.
           </p>
         ) : (
           <div className="space-y-3">
-            {uploadedFiles.map((doc) => (
+            {uploadedFiles
+  .filter(doc =>
+    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    doc.type.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+  .map((doc) => (
               <div
                 key={doc.id}
                 className="border border-slate-200 rounded-xl p-4"
