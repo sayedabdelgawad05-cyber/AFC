@@ -17,10 +17,17 @@ interface DashboardProps {
   rfis: RFI[];
   ncrs: NCR[];
   punches: PunchItem[];
+  documents?: any[];
   onSelectStation: (stationId: string) => void;
 }
-
-export default function Dashboard({ stations, rfis, ncrs, punches, onSelectStation }: DashboardProps) {
+export default function Dashboard({
+  stations,
+  rfis,
+  ncrs,
+  punches,
+  documents = [],
+  onSelectStation
+}: DashboardProps) {
   // Calculated stats
   const totalStations = stations.length;
   const avgProgress = totalStations > 0 
@@ -33,6 +40,19 @@ export default function Dashboard({ stations, rfis, ncrs, punches, onSelectStati
   
   // Total delayed tasks from stations
   const delayedTasksTotal = stations.reduce((acc, st) => acc + (st.delayedTasksCount || 0), 0);
+const totalDocuments = documents.length;
+
+const revisedDocuments = documents.filter(
+  doc =>
+    doc.revision &&
+    doc.revision !== 'A'
+).length;
+
+const afcDocuments = documents.filter(
+  doc =>
+    doc.discipline &&
+    doc.discipline.toUpperCase().includes('AFC')
+).length;
 
   // Critical items
   const criticalNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Critical');
