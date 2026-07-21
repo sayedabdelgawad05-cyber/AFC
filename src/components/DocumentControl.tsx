@@ -11,7 +11,9 @@ const [documentToDelete, setDocumentToDelete] = useState<any | null>(null);
 const [searchTerm, setSearchTerm] = useState('');
 const [selectedCommentDoc, setSelectedCommentDoc] = useState<any | null>(null);
 const [newComment, setNewComment] = useState('');
-const [comments, setComments] = useState<any>({});
+const [comments, setComments] = useState<any>(
+  JSON.parse(localStorage.getItem('hsr_comments') || '{}')
+);
 const [documentNumber, setDocumentNumber] = useState('');
 const [revision, setRevision] = useState('');
 const [station, setStation] = useState('');
@@ -377,13 +379,20 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       onClick={() => {
         if (!newComment.trim()) return;
 
-        setComments(prev => ({
-          ...prev,
-          [selectedCommentDoc.id]: [
-            ...(prev[selectedCommentDoc.id] || []),
-            newComment
-          ]
-        }));
+const updatedComments = {
+  ...comments,
+  [selectedCommentDoc.id]: [
+    ...(comments[selectedCommentDoc.id] || []),
+    newComment
+  ]
+};
+
+setComments(updatedComments);
+
+localStorage.setItem(
+  'hsr_comments',
+  JSON.stringify(updatedComments)
+);
 
         setNewComment('');
       }}
