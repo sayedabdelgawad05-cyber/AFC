@@ -146,14 +146,34 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
       Uploaded: {doc.uploadDate}
     </p>
 
-    <div className="mt-3">
-      <button
-        onClick={() => setSelectedDocument(doc)}
-        className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm"
-      >
-        View
-      </button>
-    </div>
+<div className="mt-3 flex gap-2 flex-wrap">
+
+  <button
+    onClick={() => setSelectedDocument(doc)}
+    className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm"
+  >
+    View
+  </button>
+
+  <button
+    className="px-3 py-1 bg-amber-500 text-white rounded-lg text-sm"
+  >
+    Comment
+  </button>
+
+  <button
+    className="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm"
+  >
+    Download
+  </button>
+
+  <button
+    className="px-3 py-1 bg-red-500 text-white rounded-lg text-sm"
+  >
+    Delete
+  </button>
+
+</div>
   </div>
 ))}
           </div>
