@@ -441,19 +441,47 @@ const sidebarItems = [
     </h2>
 
     <div className="space-y-4">
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">Ain Sokhna</h3>
 
-        <a
-          href="https://maps.app.goo.gl/pKeLbcrqr1sGr5NbA"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 font-semibold"
-        >
-          Open Google Maps
-        </a>
-      </div>
-    </div>
+  <div className="border border-slate-200 rounded-2xl p-4">
+    <h3 className="font-bold">Ain Sokhna</h3>
+
+    <a
+      href="https://maps.app.goo.gl/pKeLbcrqr1sGr5NbA"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 font-semibold"
+    >
+      Open Google Maps
+    </a>
+  </div>
+
+  <div className="border border-slate-200 rounded-2xl p-4">
+    <h3 className="font-bold">New Capital</h3>
+
+    <a
+      href="https://maps.app.goo.gl/B81cUjfEw4PA1HfN6"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 font-semibold"
+    >
+      Open Google Maps
+    </a>
+  </div>
+
+  <div className="border border-slate-200 rounded-2xl p-4">
+    <h3 className="font-bold">Mohamed Naguib</h3>
+
+    <a
+      href="https://maps.app.goo.gl/wuzbFeQhih8yo8dWA"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-600 font-semibold"
+    >
+      Open Google Maps
+    </a>
+  </div>
+
+</div>
   </div>
 )}
 
