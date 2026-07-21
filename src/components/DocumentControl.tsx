@@ -9,6 +9,9 @@ const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
 const [deleteReason, setDeleteReason] = useState('');
 const [documentToDelete, setDocumentToDelete] = useState<any | null>(null);
 const [searchTerm, setSearchTerm] = useState('');
+const [selectedCommentDoc, setSelectedCommentDoc] = useState<any | null>(null);
+const [newComment, setNewComment] = useState('');
+const [comments, setComments] = useState<any>({});
 useEffect(() => {
   api.getDocuments().then((docs) => {
     setUploadedFiles(docs);
@@ -157,11 +160,13 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
     View
   </button>
 
-  <button
-    className="px-3 py-1 bg-amber-500 text-white rounded-lg text-sm"
-  >
-    Comment
-  </button>
+<button
+  onClick={() => setSelectedCommentDoc(doc)}
+  className="px-3 py-1 bg-amber-500 text-white rounded-lg text-sm"
+>
+  Comment
+</button>
+
 
   <button
     className="px-3 py-1 bg-emerald-500 text-white rounded-lg text-sm"
@@ -270,6 +275,62 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
       </button>
 
     </div>
+  </div>
+)}
+{selectedCommentDoc && (
+  <div className="bg-white border border-slate-200 rounded-3xl p-6 mt-6">
+    <h3 className="text-lg font-bold mb-4">
+      Comments - {selectedCommentDoc.name}
+    </h3>
+
+    <input
+      type="text"
+      value={newComment}
+      onChange={(e) => setNewComment(e.target.value)}
+      placeholder="Write a comment..."
+      className="w-full border border-slate-300 rounded-xl px-3 py-2"
+    />
+
+    <button
+      onClick={() => {
+        if (!newComment.trim()) return;
+
+        setComments(prev => ({
+          ...prev,
+          [selectedCommentDoc.id]: [
+            ...(prev[selectedCommentDoc.id] || []),
+            newComment
+          ]
+        }));
+
+        setNewComment('');
+      }}
+      className="mt-3 px-4 py-2 bg-amber-500 text-white rounded-lg"
+    >
+      Add Comment
+    </button>
+
+    <div className="mt-4 space-y-2">
+
+      {(comments[selectedCommentDoc.id] || []).map(
+        (comment: string, index: number) => (
+          <div
+            key={index}
+            className="border border-slate-200 rounded-lg p-2"
+          >
+            {comment}
+          </div>
+        )
+      )}
+
+    </div>
+
+    <button
+      onClick={() => setSelectedCommentDoc(null)}
+      className="mt-4 px-4 py-2 bg-slate-500 text-white rounded-lg"
+    >
+      Close
+    </button>
   </div>
 )}
     </div>
