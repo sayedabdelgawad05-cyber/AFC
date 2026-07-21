@@ -192,8 +192,12 @@ setSelectedFile(null);
             {uploadedFiles
   .filter(doc =>
    
-    doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-doc.type.toLowerCase().includes(searchTerm.toLowerCase())
+doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+doc.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+(doc.documentNumber || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+(doc.revision || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+(doc.station || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+(doc.discipline || '').toLowerCase().includes(searchTerm.toLowerCase())
 )
 .map((doc) => (
   <div
