@@ -440,31 +440,46 @@ const sidebarItems = [
       📍 Station Locations
     </h2>
 
-    <div className="space-y-4">
+<div className="space-y-4">
 
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">Ain Sokhna</h3>
-      </div>
+  <button
+    className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+    onClick={() => window.open('https://maps.app.goo.gl/pKeLbcrqr1sGr5NbA', '_blank')}
+  >
+    <h3 className="font-bold">Ain Sokhna</h3>
+  </button>
 
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">New Capital</h3>
-      </div>
+  <button
+    className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+    onClick={() => window.open('https://maps.app.goo.gl/B81cUjfEw4PA1HfN6', '_blank')}
+  >
+    <h3 className="font-bold">New Capital</h3>
+  </button>
 
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">
-          Mohamed Naguib (Ahmed Omar Hashem)
-        </h3>
-      </div>
+  <button
+    className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+    onClick={() => window.open('https://maps.app.goo.gl/wuzbFeQhih8yo8dWA', '_blank')}
+  >
+    <h3 className="font-bold">
+      Mohamed Naguib (Ahmed Omar Hashem)
+    </h3>
+  </button>
 
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">Cairo</h3>
-      </div>
+  <button
+    className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+    onClick={() => window.open('https://maps.app.goo.gl/JP1BYpHZkMgUZoNC9', '_blank')}
+  >
+    <h3 className="font-bold">Cairo</h3>
+  </button>
 
-      <div className="border border-slate-200 rounded-2xl p-4">
-        <h3 className="font-bold">Giza</h3>
-      </div>
+  <button
+    className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+    onClick={() => window.open('https://maps.app.goo.gl/Fqk9bPv8SvQi2pZi6', '_blank')}
+  >
+    <h3 className="font-bold">Giza</h3>
+  </button>
 
-    </div>
+</div>
   </div>
 )}
 
