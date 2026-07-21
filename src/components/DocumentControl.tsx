@@ -12,6 +12,10 @@ const [searchTerm, setSearchTerm] = useState('');
 const [selectedCommentDoc, setSelectedCommentDoc] = useState<any | null>(null);
 const [newComment, setNewComment] = useState('');
 const [comments, setComments] = useState<any>({});
+const [documentNumber, setDocumentNumber] = useState('');
+const [revision, setRevision] = useState('');
+const [station, setStation] = useState('');
+const [discipline, setDiscipline] = useState('');
 useEffect(() => {
   api.getDocuments().then((docs) => {
     setUploadedFiles(docs);
@@ -25,12 +29,16 @@ useEffect(() => {
     }
 
     const newDocument = {
-      id: Date.now(),
-      name: selectedFile.name,
-      type: documentType,
-      uploadDate: new Date().toLocaleDateString(),
-      size: `${(selectedFile.size / 1024).toFixed(1)} KB`
-    };
+  id: Date.now(),
+  name: selectedFile.name,
+  type: documentType,
+  documentNumber,
+  revision,
+  station,
+  discipline,
+  uploadDate: new Date().toLocaleDateString(),
+  size: `${(selectedFile.size / 1024).toFixed(1)} KB`
+};
 
 api.saveDocument(newDocument);
 
@@ -56,6 +64,61 @@ setSelectedFile(null);
         </p>
 
         <div className="grid md:grid-cols-2 gap-4">
+<div>
+  <label className="block text-sm font-semibold mb-2">
+    Document Number
+  </label>
+
+  <input
+    type="text"
+    value={documentNumber}
+    onChange={(e) => setDocumentNumber(e.target.value)}
+    placeholder="HSR-SOA-AFC-001"
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-semibold mb-2">
+    Revision
+  </label>
+
+  <input
+    type="text"
+    value={revision}
+    onChange={(e) => setRevision(e.target.value)}
+    placeholder="Rev A"
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-semibold mb-2">
+    Station
+  </label>
+
+  <input
+    type="text"
+    value={station}
+    onChange={(e) => setStation(e.target.value)}
+    placeholder="Ain Sokhna"
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+</div>
+
+<div>
+  <label className="block text-sm font-semibold mb-2">
+    Discipline
+  </label>
+
+  <input
+    type="text"
+    value={discipline}
+    onChange={(e) => setDiscipline(e.target.value)}
+    placeholder="AFC"
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+</div>
 
           <div>
             <label className="block text-sm font-semibold mb-2">
@@ -138,6 +201,21 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
     className="border border-slate-200 rounded-xl p-4"
   >
     <h4 className="font-bold">{doc.name}</h4>
+<p className="text-sm text-slate-500">
+  Doc No: {doc.documentNumber}
+</p>
+
+<p className="text-sm text-slate-500">
+  Revision: {doc.revision}
+</p>
+
+<p className="text-sm text-slate-500">
+  Station: {doc.station}
+</p>
+
+<p className="text-sm text-slate-500">
+  Discipline: {doc.discipline}
+</p>
 
     <p className="text-sm text-slate-500">
       Type: {doc.type}
