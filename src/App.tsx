@@ -245,14 +245,17 @@ export default function App() {
   const activeStation = stations.find(s => s.id === activeStationId) || stations[0];
 
   
+
 const sidebarItems = [
   { id: 'dashboard', label: 'Project Dashboard', icon: Activity },
   { id: 'station', label: 'Station Explorer', icon: MapPin },
+  { id: 'locations', label: 'Station Locations', icon: MapPin },
   { id: 'creator', label: 'Report Creator', icon: FileText, action: handleCreateNewReport },
   { id: 'archive', label: 'Reports Archive', icon: History },
   { id: 'documents', label: 'Document Control', icon: FileText },
   { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
 ];
+
 
   // Admin section restriction
   if (currentUser.role === 'admin') {
@@ -420,15 +423,40 @@ const sidebarItems = [
               />
             )}
 
-            {activeTab === 'archive' && (
-              <ReportsArchive 
-                reports={reports}
-                stations={stations}
-                onEditReport={handleEditReport}
-                onDeleteReport={handleDeleteReport}
-                onRefresh={loadProjectData}
-              />
-            )}
+            
+{activeTab === 'archive' && (
+  <ReportsArchive 
+    reports={reports}
+    stations={stations}
+    onEditReport={handleEditReport}
+    onDeleteReport={handleDeleteReport}
+    onRefresh={loadProjectData}
+  />
+)}
+
+{activeTab === 'locations' && (
+  <div className="bg-white border border-slate-200 rounded-3xl p-6">
+    <h2 className="text-2xl font-bold mb-6">
+      📍 Station Locations
+    </h2>
+
+    <div className="space-y-4">
+      <div className="border border-slate-200 rounded-2xl p-4">
+        <h3 className="font-bold">Ain Sokhna</h3>
+
+        <a
+          href="https://maps.app.goo.gl/pKeLbcrqr1sGr5NbA"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 font-semibold"
+        >
+          Open Google Maps
+        </a>
+      </div>
+    </div>
+  </div>
+)}
+
 
 {activeTab === 'documents' && (
   <DocumentControl />
