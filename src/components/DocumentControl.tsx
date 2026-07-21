@@ -244,12 +244,26 @@ doc.type.toLowerCase().includes(searchTerm.toLowerCase())
       </button>
 
       <button
-        onClick={() => {
-          alert(`Deletion Reason: ${deleteReason}`);
+       onClick={() => {
+  if (!deleteReason.trim()) {
+    alert('Please enter deletion reason.');
+    return;
+  }
 
-          setDeleteReason('');
-          setDocumentToDelete(null);
-        }}
+  const updatedFiles = uploadedFiles.filter(
+    file => file.id !== documentToDelete.id
+  );
+
+  setUploadedFiles(updatedFiles);
+
+  localStorage.setItem(
+    'hsr_documents',
+    JSON.stringify(updatedFiles)
+  );
+
+  setDeleteReason('');
+  setDocumentToDelete(null);
+}}
         className="px-4 py-2 bg-red-600 text-white rounded-lg"
       >
         Confirm Delete
