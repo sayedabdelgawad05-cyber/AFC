@@ -479,6 +479,41 @@ const sidebarItems = [
     <h3 className="font-bold">Giza</h3>
   </button>
 
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/ye7uvFqVvqF6axS4A', '_blank')}
+>
+  <h3 className="font-bold">October Gardens</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/PJLazQ8mnJHFkFQJ9', '_blank')}
+>
+  <h3 className="font-bold">6 October</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/EVmw7YY4trEv1vxH8', '_blank')}
+>
+  <h3 className="font-bold">Sphinx</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/PeH584Qnj5rAVeaJ8', '_blank')}
+>
+  <h3 className="font-bold">Sadat</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/JaKTeUhavubNzyP46', '_blank')}
+>
+  <h3 className="font-bold">Wadi El Natrun</h3>
+</button>
+
 </div>
   </div>
 )}
