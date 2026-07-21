@@ -14,11 +14,11 @@ const KEYS = {
   NCRS: 'hsr_ncrs',
   PUNCHES: 'hsr_punches',
   REPORTS: 'hsr_reports',
+  DOCUMENTS: 'hsr_documents',
   USERS: 'hsr_users',
   CURRENT_USER: 'hsr_current_user',
   PENDING_SYNC: 'hsr_pending_sync_reports'
 };
-
 // Initial state helpers
 function getLocal<T>(key: string, defaultValue: T): T {
   const data = localStorage.getItem(key);
@@ -602,4 +602,27 @@ askAssistant: async (messages: ChatMessage[], activeStationId?: string): Promise
     return `AI ERROR: ${String(e)}`;
   }
 },
+getDocuments: async (): Promise<any[]> => {
+    return getLocal<any[]>(KEYS.DOCUMENTS, []);
+  },
+
+  saveDocument: async (document: any): Promise<any> => {
+    const documents = getLocal<any[]>(KEYS.DOCUMENTS, []);
+
+    setLocal(KEYS.DOCUMENTS, [
+      ...documents,
+      document
+    ]);
+
+    return document;
+  },
+
+  deleteDocument: async (id: number): Promise<void> => {
+    const documents = getLocal<any[]>(KEYS.DOCUMENTS, []);
+
+    setLocal(
+      KEYS.DOCUMENTS,
+      documents.filter(doc => doc.id !== id)
+    );
+  },
 };

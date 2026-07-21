@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { api } from '../lib/api';
 
 export default function DocumentControl() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState('Architecture');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+
+useEffect(() => {
+  api.getDocuments().then((docs) => {
+    setUploadedFiles(docs);
+  });
+}, []);
 
   const handleUpload = () => {
     if (!selectedFile) {
@@ -19,8 +26,14 @@ export default function DocumentControl() {
       size: `${(selectedFile.size / 1024).toFixed(1)} KB`
     };
 
-    setUploadedFiles(prev => [...prev, newDocument]);
-    setSelectedFile(null);
+api.saveDocument(newDocument);
+
+setUploadedFiles(prev => [
+  ...prev,
+  newDocument
+]);
+
+setSelectedFile(null);
   };
 
   return (
