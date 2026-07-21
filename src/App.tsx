@@ -513,6 +513,68 @@ const sidebarItems = [
 >
   <h3 className="font-bold">Wadi El Natrun</h3>
 </button>
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/rLKsrvXm3CNnAjUJ8', '_blank')}
+>
+  <h3 className="font-bold">Noubarya</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/9QeTZEHKMNwEoH3J9', '_blank')}
+>
+  <h3 className="font-bold">Borg El Arab</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/bnPnEkoxxkRApBnY9', '_blank')}
+>
+  <h3 className="font-bold">Army Stadium</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/sukzKN8RMRHT8T5h9', '_blank')}
+>
+  <h3 className="font-bold">Hammam</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/LZ1okNJbgNgKWN8a7', '_blank')}
+>
+  <h3 className="font-bold">Alamein</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/ovE6JZur9YSXnYdV9', '_blank')}
+>
+  <h3 className="font-bold">Sidi Abdelrahman</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/jbRoycGicH68TvHi7', '_blank')}
+>
+  <h3 className="font-bold">Dabaa</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/jA1L43PBtNsgxzbP8', '_blank')}
+>
+  <h3 className="font-bold">Ras El Hekma</h3>
+</button>
+
+<button
+  className="w-full text-left border border-slate-200 rounded-2xl p-4 hover:bg-slate-50"
+  onClick={() => window.open('https://maps.app.goo.gl/wLWM1HdBkMtnxhFG6', '_blank')}
+>
+  <h3 className="font-bold">Matrouh</h3>
+</button>
 
 </div>
   </div>
