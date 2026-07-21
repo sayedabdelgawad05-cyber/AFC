@@ -13,10 +13,16 @@ export interface User {
 
 export interface Station {
   id: string;
-  nameAr?: string
+  nameAr?: string;
   nameEn: string;
+
   type: 'Passenger' | 'Depot' | 'Junction';
-  progress: number; // 0 to 100
+
+  latitude?: string;
+  longitude?: string;
+  googleMapsUrl?: string;
+
+  progress: number;
   totalRFIs: number;
   openRFIs: number;
   totalNCRs: number;

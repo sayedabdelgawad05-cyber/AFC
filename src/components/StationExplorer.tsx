@@ -188,12 +188,27 @@ export default function StationExplorer({
               <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{station.nameEn}</h2>
               <span className="text-sm font-semibold text-slate-500 font-sans">({station.type})</span>
             </div>
-            <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
-              <span>{station.type} Installation Base</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
-              <span>Overall Progress: <strong className="text-teal-600 font-bold">{station.progress}%</strong></span>
-            </p>
-          </div>
+           <p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
+  <span>{station.type} Installation Base</span>
+  <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+  <span>
+    Overall Progress:
+    <strong className="text-teal-600 font-bold">
+      {station.progress}%
+    </strong>
+  </span>
+</p>
+
+<p className="text-xs text-slate-500 mt-1 flex items-center gap-1.5 font-medium">
+  <span>{station.type} Installation Base</span>
+  <span className="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+  <span>
+    Overall Progress:
+    <strong className="text-teal-600 font-bold">
+      {station.progress}%
+    </strong>
+  </span>
+</p>          </div>
         </div>
 
         {/* Progress bar in header */}
