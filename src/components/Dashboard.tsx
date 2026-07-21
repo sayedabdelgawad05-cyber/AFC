@@ -37,9 +37,6 @@ export default function Dashboard({
   const openRfisCount = rfis.filter(r => r.status === 'Open').length;
   const openNcrsCount = ncrs.filter(n => n.status === 'Open').length;
   const openPunchesCount = punches.filter(p => p.status === 'Open').length;
-  
-  // Total delayed tasks from stations
-  const delayedTasksTotal = stations.reduce((acc, st) => acc + (st.delayedTasksCount || 0), 0);
 const totalDocuments = documents.length;
 
 const revisedDocuments = documents.filter(
@@ -160,6 +157,87 @@ const afcDocuments = documents.filter(
           </p>
         </div>
       </div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+  <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+    <p className="text-xs uppercase text-slate-500 font-bold">
+      Documents
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {totalDocuments}
+    </h3>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+    <p className="text-xs uppercase text-slate-500 font-bold">
+      AFC Documents
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {afcDocuments}
+    </h3>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
+    <p className="text-xs uppercase text-slate-500 font-bold">
+      Revised Drawings
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {revisedDocuments}
+    </h3>
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+  <h3 className="text-lg font-bold mb-4">
+    Station Readiness Matrix
+  </h3>
+
+  <div className="space-y-3">
+
+    {stationReadiness
+      .sort((a, b) => b.readiness - a.readiness)
+      .slice(0, 10)
+      .map(st => (
+
+      <div
+        key={st.id}
+        className="flex items-center justify-between border border-slate-100 rounded-xl p-3"
+      >
+        <div>
+          <h4 className="font-semibold">
+            {st.nameEn}
+          </h4>
+
+          <p className="text-xs text-slate-500">
+            NCR: {st.openNCRs} |
+            RFI: {st.openRFIs} |
+            Punch: {st.openPunches}
+          </p>
+        </div>
+
+        <div
+          className={`font-bold text-lg ${
+            st.readiness >= 80
+              ? 'text-green-600'
+              : st.readiness >= 60
+              ? 'text-amber-500'
+              : 'text-red-500'
+          }`}
+        >
+          {st.readiness}%
+        </div>
+      </div>
+
+    ))}
+  </div>
+
+</div>
 
       {/* Main content split */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
