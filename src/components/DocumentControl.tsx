@@ -5,6 +5,7 @@ export default function DocumentControl() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState('Architecture');
   const [uploadedFiles, setUploadedFiles] = useState<any[]>([]);
+const [selectedDocument, setSelectedDocument] = useState<any | null>(null);
 const [searchTerm, setSearchTerm] = useState('');
 useEffect(() => {
   api.getDocuments().then((docs) => {
@@ -122,33 +123,73 @@ setSelectedFile(null);
           <div className="space-y-3">
             {uploadedFiles
   .filter(doc =>
+   
     doc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doc.type.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  .map((doc) => (
-              <div
-                key={doc.id}
-                className="border border-slate-200 rounded-xl p-4"
-              >
-                <h4 className="font-bold">{doc.name}</h4>
+doc.type.toLowerCase().includes(searchTerm.toLowerCase())
+)
+.map((doc) => (
+  <div
+    key={doc.id}
+    className="border border-slate-200 rounded-xl p-4"
+  >
+    <h4 className="font-bold">{doc.name}</h4>
 
-                <p className="text-sm text-slate-500">
-                  Type: {doc.type}
-                </p>
+    <p className="text-sm text-slate-500">
+      Type: {doc.type}
+    </p>
 
-                <p className="text-sm text-slate-500">
-                  Size: {doc.size}
-                </p>
+    <p className="text-sm text-slate-500">
+      Size: {doc.size}
+    </p>
 
-                <p className="text-sm text-slate-500">
-                  Uploaded: {doc.uploadDate}
-                </p>
-              </div>
-            ))}
+    <p className="text-sm text-slate-500">
+      Uploaded: {doc.uploadDate}
+    </p>
+
+    <div className="mt-3">
+      <button
+        onClick={() => setSelectedDocument(doc)}
+        className="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm"
+      >
+        View
+      </button>
+    </div>
+  </div>
+))}
           </div>
         )}
       </div>
 
+      {selectedDocument && (
+        <div className="bg-white border border-slate-200 rounded-3xl p-6 mt-6">
+          <h3 className="text-lg font-bold mb-4">
+            Document Details
+          </h3>
+
+          <p>
+            <strong>Name:</strong> {selectedDocument.name}
+          </p>
+
+          <p>
+            <strong>Type:</strong> {selectedDocument.type}
+          </p>
+
+          <p>
+            <strong>Size:</strong> {selectedDocument.size}
+          </p>
+
+          <p>
+            <strong>Upload Date:</strong> {selectedDocument.uploadDate}
+          </p>
+
+          <button
+            onClick={() => setSelectedDocument(null)}
+            className="mt-4 px-4 py-2 bg-slate-500 text-white rounded-lg"
+          >
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 }
