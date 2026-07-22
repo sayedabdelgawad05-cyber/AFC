@@ -219,6 +219,19 @@ const handleAddObservation = () => {
   setImpact('Major');
 };
 
+const handleToggleObservationStatus = (id: number) => {
+  const updated = observations.map(item =>
+    item.id === id
+      ? {
+          ...item,
+          status: item.status === 'Open' ? 'Closed' : 'Open'
+        }
+      : item
+  );
+
+  saveObservations(updated);
+};
+
   const filteredObservations = observations.filter((item) => {
     const search = searchTerm.toLowerCase();
 
@@ -491,6 +504,17 @@ const handleAddObservation = () => {
                   >
                     {item.status}
                   </span>
+<button
+  onClick={() => handleToggleObservationStatus(item.id)}
+  className={`ml-2 text-xs font-bold px-3 py-1 rounded-full ${
+    item.status === 'Open'
+      ? 'bg-emerald-500 text-white'
+      : 'bg-red-500 text-white'
+  }`}
+>
+  {item.status === 'Open' ? 'Close' : 'Reopen'}
+</button>
+
                 </div>
 
                 <p className="text-sm text-slate-700 mt-3">
