@@ -259,6 +259,23 @@ const filteredObservations = observations.filter((item) => {
     item => item.status === 'Closed'
   ).length;
 
+const stationOpenObservationMap: Record<string, number> = {};
+
+observations.forEach((item) => {
+  if (item.status !== 'Open') return;
+
+  const stationName = item.station || 'Unknown Station';
+
+  stationOpenObservationMap[stationName] =
+    (stationOpenObservationMap[stationName] || 0) + 1;
+});
+
+const topProblematicStations = Object.entries(stationOpenObservationMap)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 5);
+
+const topProblematicStation = topProblematicStations[0];
+
 const getObservationPattern = (text: string) => {
   const normalized = text
     .toLowerCase()
@@ -534,6 +551,44 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
 
           <p className="text-xs text-slate-500 mt-1">
             Repeated {count} times
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Top Problematic Stations
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Stations ranked by number of open observations.
+  </p>
+
+  {topProblematicStations.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No open observations found.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {topProblematicStations.map(([stationName, count]) => (
+        <div
+          key={stationName}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50 flex items-center justify-between"
+        >
+          <div>
+            <p className="text-sm font-semibold text-slate-800">
+              {stationName}
+            </p>
+
+            <p className="text-xs text-slate-500 mt-1">
+              Open observations
+            </p>
+          </div>
+
+          <p className="text-xl font-extrabold text-red-600">
+            {count}
           </p>
         </div>
       ))}
