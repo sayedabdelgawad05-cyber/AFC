@@ -259,6 +259,26 @@ const filteredObservations = observations.filter((item) => {
     item => item.status === 'Closed'
   ).length;
 
+const repeatedObservationMap: Record<string, number> = {};
+
+observations.forEach((item) => {
+  const key = item.observation
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '')
+    .split(' ')
+    .slice(0, 8)
+    .join(' ');
+
+  if (key.trim()) {
+    repeatedObservationMap[key] = (repeatedObservationMap[key] || 0) + 1;
+  }
+});
+
+const repeatedObservations = Object.entries(repeatedObservationMap)
+  .filter(([_, count]) => count > 1)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 5);
+
   return (
     <div className="space-y-6">
 
