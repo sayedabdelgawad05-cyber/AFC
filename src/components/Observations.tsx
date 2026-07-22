@@ -317,35 +317,6 @@ observations.forEach((item) => {
 const topDisciplines = Object.entries(disciplineObservationMap)
   .sort((a, b) => b[1] - a[1]);
 
-const lessonsLearned = repeatedObservations.map(([pattern, count]) => {
-  let lesson = '';
-
-  if (pattern.toLowerCase().includes('missing connection')) {
-    lesson =
-      'Ensure cable tray and conduit interface details are coordinated and clearly shown before issuing shop drawings.';
-  } else if (pattern.toLowerCase().includes('sharp bends')) {
-    lesson =
-      'Verify cable tray bend radius and use standard fittings to avoid cable installation and maintenance issues.';
-  } else if (pattern.toLowerCase().includes('embedded conduits')) {
-    lesson =
-      'Embedded conduit locations must be included and coordinated with SOAC cable tray routes at early design stages.';
-  } else if (pattern.toLowerCase().includes('door opening')) {
-    lesson =
-      'Technical room door opening direction must be checked against access, maintenance, and equipment installation requirements.';
-  } else {
-    lesson =
-      'Repeated observation pattern should be reviewed and addressed during coordination before next revision submission.';
-  }
-
-  return {
-    pattern,
-    count,
-    lesson
-  };
-});
-
-const topProblematicStation = topProblematicStations[0];
-
 const getObservationPattern = (text: string) => {
   const normalized = text
     .toLowerCase()
@@ -394,7 +365,9 @@ const getObservationPattern = (text: string) => {
     .split(' ')
     .slice(0, 10)
     .join(' ');
-};const repeatedObservationMap: Record<string, number> = {};
+};
+
+const repeatedObservationMap: Record<string, number> = {};
 
 observations.forEach((item) => {
   const key = getObservationPattern(item.observation);
@@ -408,6 +381,34 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
   .filter(([_, count]) => count > 1)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 5);
+
+const lessonsLearned = repeatedObservations.map(([pattern, count]) => {
+  let lesson = '';
+
+  if (pattern.toLowerCase().includes('missing connection')) {
+    lesson =
+      'Ensure cable tray and conduit interface details are coordinated and clearly shown before issuing shop drawings.';
+  } else if (pattern.toLowerCase().includes('sharp bends')) {
+    lesson =
+      'Verify cable tray bend radius and use standard fittings to avoid cable installation and maintenance issues.';
+  } else if (pattern.toLowerCase().includes('embedded conduits')) {
+    lesson =
+      'Embedded conduit locations must be included and coordinated with SOAC cable tray routes at early design stages.';
+  } else if (pattern.toLowerCase().includes('door opening')) {
+    lesson =
+      'Technical room door opening direction must be checked against access, maintenance, and equipment installation requirements.';
+  } else {
+    lesson =
+      'Repeated observation pattern should be reviewed and addressed during coordination before next revision submission.';
+  }
+
+  return {
+    pattern,
+    count,
+    lesson
+  };
+});
+
 const getReplyPattern = (text: string) => {
   const normalized = text
     .toLowerCase()
@@ -472,6 +473,8 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
   .filter(([_, count]) => count > 1)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 5);
+
+
   return (
     <div className="space-y-6">
 
@@ -775,45 +778,6 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
 
           <p className="text-sm text-slate-700 mt-2">
             <strong>Lesson:</strong> {item.lesson}
-          </p>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
-  <h3 className="text-lg font-bold text-slate-900 mb-3">
-    Top Problematic Stations
-  </h3>
-
-  <p className="text-sm text-slate-500 mb-4">
-    Stations ranked by number of open observations.
-  </p>
-
-  {topProblematicStations.length === 0 ? (
-    <p className="text-sm text-slate-500">
-      No open observations found.
-    </p>
-  ) : (
-    <div className="space-y-3">
-      {topProblematicStations.map(([stationName, count]) => (
-        <div
-          key={stationName}
-          className="border border-slate-200 rounded-xl p-3 bg-slate-50 flex items-center justify-between"
-        >
-          <div>
-            <p className="text-sm font-semibold text-slate-800">
-              {stationName}
-            </p>
-
-            <p className="text-xs text-slate-500 mt-1">
-              Open observations
-            </p>
-          </div>
-
-          <p className="text-xl font-extrabold text-red-600">
-            {count}
           </p>
         </div>
       ))}
