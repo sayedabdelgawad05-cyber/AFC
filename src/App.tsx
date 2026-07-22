@@ -11,6 +11,7 @@ import ReportsArchive from './components/ReportsArchive';
 import AdminPanel from './components/AdminPanel';
 import AIAssistant from './components/AIAssistant';
 import DocumentControl from './components/DocumentControl';
+import Observations from './components/Observations';
 
 // Icons
 import { 
@@ -38,6 +39,7 @@ type NavTab =
   | 'archive'
   | 'assistant'
   | 'documents'
+  | 'observations'
   | 'admin';
 
 export default function App() {
@@ -252,6 +254,7 @@ const sidebarItems = [
   { id: 'locations', label: 'Station Locations', icon: MapPin },
   { id: 'creator', label: 'Report Creator', icon: FileText, action: handleCreateNewReport },
   { id: 'archive', label: 'Reports Archive', icon: History },
+  { id: 'observations', label: 'Observations', icon: FileText },
   { id: 'documents', label: 'Document Control', icon: FileText },
   { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
 ];
@@ -578,6 +581,10 @@ const sidebarItems = [
 
 </div>
   </div>
+)}
+
+{activeTab === 'observations' && (
+  <Observations />
 )}
 
 {activeTab === 'documents' && (
