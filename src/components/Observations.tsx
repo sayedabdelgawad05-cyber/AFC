@@ -274,6 +274,37 @@ const topProblematicStations = Object.entries(stationOpenObservationMap)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 5);
 
+const stationObservationSummaryMap: Record<
+  string,
+  { total: number; open: number; closed: number }
+> = {};
+
+observations.forEach((item) => {
+  const stationName = item.station || 'Unknown Station';
+
+  if (!stationObservationSummaryMap[stationName]) {
+    stationObservationSummaryMap[stationName] = {
+      total: 0,
+      open: 0,
+      closed: 0
+    };
+  }
+
+  stationObservationSummaryMap[stationName].total += 1;
+
+  if (item.status === 'Open') {
+    stationObservationSummaryMap[stationName].open += 1;
+  }
+
+  if (item.status === 'Closed') {
+    stationObservationSummaryMap[stationName].closed += 1;
+  }
+});
+
+const stationObservationSummary = Object.entries(
+  stationObservationSummaryMap
+).sort((a, b) => b[1].total - a[1].total);
+
 const topProblematicStation = topProblematicStations[0];
 
 const getObservationPattern = (text: string) => {
