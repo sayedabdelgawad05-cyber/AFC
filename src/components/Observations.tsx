@@ -75,10 +75,10 @@ const handleCreateObservationsFromText = () => {
     .map(line => line.trim())
     .filter(Boolean);
 
+  const fullText = importedText.toLowerCase();
+
   let detectedStation = station || 'Unknown Station';
   let detectedLevel = level || 'Not specified';
-
-  const fullText = importedText.toLowerCase();
 
   if (fullText.includes('wadi')) {
     detectedStation = 'Wadi El Natroun';
@@ -100,81 +100,123 @@ const handleCreateObservationsFromText = () => {
     detectedLevel = 'Mezzanine';
   }
 
+  const isItemNumberLine = (line: string) => {
+    return /^\d+\.?$/.test(line.trim());
+  };
+
   const createdItems: ObservationItem[] = [];
 
   for (let i = 0; i < lines.length; i++) {
-    const isItemNumber = /^\d+\.?$/.test(lines[i]);
+    if (!isItemNumberLine(lines[i])) continue;
 
-    if (isItemNumber) {
-      let nextItemIndex = lines.findIndex((line, index) => {
-        return index > i && /^\d+\.?$/.test(line);
-      });
+    let nextItemIndex = lines.findIndex((line, index) => {
+      return index > i && isItemNumberLine(line);
+    });
 
-      if (nextItemIndex === -1) {
-        nextItemIndex = Math.min(i + 40, lines.length);
-      }
-
-      const block = lines.slice(i, nextItemIndex);
-
-      const pageSection = block[1] || detectedLevel;
-
-      const impactIndex = block.findIndex(line =>
-        line === 'M' || line === 'm'
-      );
-
-      const statusIndex = block.findIndex(line =>
-        line.toLowerCase() === 'open' ||
-        line.toLowerCase() === 'closed'
-      );
-
-      const impactValue =
-        impactIndex !== -1 && block[impactIndex] === 'm'
-          ? 'Minor'
-          : 'Major';
-
-      const statusValue =
-        statusIndex !== -1 &&
-        block[statusIndex].toLowerCase() === 'closed'
-          ? 'Closed'
-          : 'Open';
-
-      const observationStart = 2;
-
-      const observationEnd =
-        impactIndex !== -1 ? impactIndex : Math.min(block.length, 12);
-
-      const replyStart =
-        impactIndex !== -1 ? impactIndex + 1 : observationEnd;
-
-      const replyEnd =
-        statusIndex !== -1 ? statusIndex : block.length;
-
-      const observationText = block
-        .slice(observationStart, observationEnd)
-        .join(' ')
-        .trim();
-
-      const replyText = block
-        .slice(replyStart, replyEnd)
-        .join(' ')
-        .trim();
-
-      if (observationText) {
-        const newItem: ObservationItem = {
-          id: Date.now() + i,
-          station: detectedStation,
-          level: pageSection,
-          discipline: 'SOAC',
-          observation: observationText,
-          reply: replyText,
-          status: statusValue,
-          impact: impactValue,
-          date: new Date().toLocaleDateString()
-        };
-
-        createdItems.push(newItem);
-      }
+    if (nextItemIndex === -1) {
+      nextItemIndex = lines.length;
     }
+
+    const block = lines.slice(i, nextItemIndex);
+
+    const pageSection = block[1] || detectedLevel;
+
+    const impactIndex = block.findIndex((line) => {
+      const value = line.trim();
+      return value === 'M' || value === 'm';
+    });
+
+    const statusIndex = block.findIndex((line) => {
+      const value = line.trim().toLowerCase();
+      return value === 'open' || value === 'closed';
+    });
+
+    const impactValue: 'Major' | 'Minor' =
+      impactIndex !== -1 && block[impactIndex].trim() === 'm'
+        ? 'Minor'
+        : 'Major';
+
+    const statusValue: 'Open' | 'Closed' =
+      statusIndex !== -1 &&
+      block[statusIndex].trim().toLowerCase() === 'closed'
+        ? 'Closed'
+        : 'Open';
+
+    const observationStart = 2;
+
+    const observationEnd =
+      impactIndex !== -1
+        ? impactIndex
+        : statusIndex !== -1
+        ? statusIndex
+        : Math.min(block.length, 12);
+
+    const replyStart =
+      impactIndex !== -1
+        ? impactIndex + 1
+        : observationEnd;
+
+    const replyEnd =
+      statusIndex !== -1
+        ? statusIndex
+        : block.length;
+
+    const observationText = block
+      .slice(observationStart, observationEnd)
+      .filter(line => {
+        const value = line.trim().toLowerCase();
+
+        return (
+          value !== 'soa' &&
+          value !== 'contractor' &&
+          value !== 'comments' &&
+          value !== 'response' &&
+          value !== 'status' &&
+          value !== 'system / name' &&
+          value !== 'impact'
+        );
+      })
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const replyText = block
+      .slice(replyStart, replyEnd)
+      .filter(line => {
+        const value = line.trim().toLowerCase();
+
+        return (
+          value !== 'soa' &&
+          value !== 'contractor' &&
+          value !== 'comments' &&
+          value !== 'response' &&
+          value !== 'status' &&
+          value !== 'system / name' &&
+          value !== 'impact' &&
+          value !== 'm' &&
+          value !== 'major' &&
+          value !== 'minor'
+        );
+      })
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!observationText) continue;
+
+    const newItem: ObservationItem = {
+      id: Date.now() + i,
+      station: detectedStation,
+      level: pageSection || detectedLevel,
+      discipline: 'SOAC',
+      observation: observationText,
+      reply: replyText,
+      status: statusValue,
+      impact: impactValue,
+      date: new Date().toLocaleDateString()
+    };
+
+    createdItems.push(newItem);
   }
 
   if (createdItems.length === 0) {
