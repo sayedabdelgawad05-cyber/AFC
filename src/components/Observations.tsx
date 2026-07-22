@@ -317,6 +317,33 @@ observations.forEach((item) => {
 const topDisciplines = Object.entries(disciplineObservationMap)
   .sort((a, b) => b[1] - a[1]);
 
+const lessonsLearned = repeatedObservations.map(([pattern, count]) => {
+  let lesson = '';
+
+  if (pattern.toLowerCase().includes('missing connection')) {
+    lesson =
+      'Ensure cable tray and conduit interface details are coordinated and clearly shown before issuing shop drawings.';
+  } else if (pattern.toLowerCase().includes('sharp bends')) {
+    lesson =
+      'Verify cable tray bend radius and use standard fittings to avoid cable installation and maintenance issues.';
+  } else if (pattern.toLowerCase().includes('embedded conduits')) {
+    lesson =
+      'Embedded conduit locations must be included and coordinated with SOAC cable tray routes at early design stages.';
+  } else if (pattern.toLowerCase().includes('door opening')) {
+    lesson =
+      'Technical room door opening direction must be checked against access, maintenance, and equipment installation requirements.';
+  } else {
+    lesson =
+      'Repeated observation pattern should be reviewed and addressed during coordination before next revision submission.';
+  }
+
+  return {
+    pattern,
+    count,
+    lesson
+  };
+});
+
 const topProblematicStation = topProblematicStations[0];
 
 const getObservationPattern = (text: string) => {
@@ -712,6 +739,43 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
           <span className="text-xl font-bold text-indigo-600">
             {count}
           </span>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Lessons Learned
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Engineering lessons generated from repeated observation patterns.
+  </p>
+
+  {lessonsLearned.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No lessons learned generated yet.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {lessonsLearned.map((item) => (
+        <div
+          key={item.pattern}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+        >
+          <p className="text-sm font-bold text-slate-900">
+            {item.pattern}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Repeated {item.count} times
+          </p>
+
+          <p className="text-sm text-slate-700 mt-2">
+            <strong>Lesson:</strong> {item.lesson}
+          </p>
         </div>
       ))}
     </div>
