@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import mammoth from 'mammoth';
 
 interface ObservationItem {
   id: number;
@@ -15,6 +16,9 @@ interface ObservationItem {
 export default function Observations() {
   const [observations, setObservations] = useState<ObservationItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+   const [selectedWordFile, setSelectedWordFile] = useState<File | null>(null);
+   const [importedText, setImportedText] = useState('');
+
 
   const [station, setStation] = useState('');
   const [level, setLevel] = useState('');
@@ -36,6 +40,28 @@ export default function Observations() {
     setObservations(items);
     localStorage.setItem('hsr_observations', JSON.stringify(items));
   };
+
+const handleImportWordFile = async () => {
+  if (!selectedWordFile) {
+    alert('Please select a Word file first.');
+    return;
+  }
+
+  try {
+    const arrayBuffer = await selectedWordFile.arrayBuffer();
+
+    const result = await mammoth.extractRawText({
+      arrayBuffer
+    });
+
+    setImportedText(result.value);
+
+    alert('Word file imported successfully.');
+  } catch (error) {
+    console.error('Word import error:', error);
+    alert('Failed to import Word file.');
+  }
+};
 
   const handleAddObservation = () => {
     if (!station.trim() || !observation.trim()) {
@@ -101,6 +127,46 @@ export default function Observations() {
         <p className="text-slate-500 mb-6">
           Register and track station observations, contractor replies, status, and impact.
         </p>
+
+<div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-md font-bold text-slate-900 mb-3">
+    Import Observation Sheet
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Upload a Word observation sheet to extract its text content.
+  </p>
+
+  <input
+    type="file"
+    accept=".doc,.docx"
+    onChange={(e) =>
+      setSelectedWordFile(
+        e.target.files ? e.target.files[0] : null
+      )
+    }
+    className="w-full border border-slate-300 rounded-xl px-3 py-2 mb-3"
+  />
+
+  <button
+    onClick={handleImportWordFile}
+    className="px-5 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-bold rounded-xl"
+  >
+    Import Word File
+  </button>
+
+  {importedText && (
+    <div className="mt-4 bg-white border border-slate-200 rounded-xl p-4 max-h-64 overflow-y-auto">
+      <h4 className="font-bold mb-2">
+        Extracted Text Preview
+      </h4>
+
+      <pre className="text-xs whitespace-pre-wrap text-slate-700">
+        {importedText}
+      </pre>
+    </div>
+  )}
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
