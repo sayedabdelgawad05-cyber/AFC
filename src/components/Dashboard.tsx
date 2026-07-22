@@ -79,7 +79,18 @@ const stationRiskScores = stations.map(st => {
 const topRiskStations = [...stationRiskScores]
   .sort((a, b) => b.riskScore - a.riskScore)
   .slice(0, 5);
+const mostNcrStation = [...stations].sort(
+  (a, b) => b.openNCRs - a.openNCRs
+)[0];
 
+const mostRfiStation = [...stations].sort(
+  (a, b) => b.openRFIs - a.openRFIs
+)[0];
+
+const mostPunchStation = [...stations].sort(
+  (a, b) => b.openPunches - a.openPunches
+)[0];
+``
 const engineeringHealthScore =
   stationReadiness.length > 0
     ? Math.round(
@@ -305,6 +316,120 @@ const engineeringHealthScore =
   </div>
 
 </div>
+
+{mostNcrStation && (
+  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Most NCR Station
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1">
+      NCR means Non-Conformance Report
+    </p>
+
+    <div className="mt-4 flex items-center justify-between">
+
+      <div>
+        <h4 className="text-xl font-extrabold text-slate-900">
+          {mostNcrStation.nameEn}
+        </h4>
+
+        <p className="text-sm text-slate-500 mt-1">
+          Station with the highest number of open Non-Conformance Reports
+        </p>
+      </div>
+
+      <div className="text-right">
+        <p className="text-xs text-slate-500 font-bold uppercase">
+          Open NCRs
+        </p>
+
+        <p className="text-3xl font-extrabold text-red-600">
+          {mostNcrStation.openNCRs}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+{mostRfiStation && (
+  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Most RFI Station
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1">
+      RFI means Request for Information
+    </p>
+
+    <div className="mt-4 flex items-center justify-between">
+
+      <div>
+        <h4 className="text-xl font-extrabold text-slate-900">
+          {mostRfiStation.nameEn}
+        </h4>
+
+        <p className="text-sm text-slate-500 mt-1">
+          Station with the highest number of open Requests for Information
+        </p>
+      </div>
+
+      <div className="text-right">
+        <p className="text-xs text-slate-500 font-bold uppercase">
+          Open RFIs
+        </p>
+
+        <p className="text-3xl font-extrabold text-cyan-600">
+          {mostRfiStation.openRFIs}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+{mostPunchStation && (
+  <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Most Punch Station
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1">
+      Station with the highest number of open Punch Items
+    </p>
+
+    <div className="mt-4 flex items-center justify-between">
+
+      <div>
+        <h4 className="text-xl font-extrabold text-slate-900">
+          {mostPunchStation.nameEn}
+        </h4>
+
+        <p className="text-sm text-slate-500 mt-1">
+          Highest open Punch Items count
+        </p>
+      </div>
+
+      <div className="text-right">
+        <p className="text-xs text-slate-500 font-bold uppercase">
+          Open Punch Items
+        </p>
+
+        <p className="text-3xl font-extrabold text-amber-600">
+          {mostPunchStation.openPunches}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+)}
 
 <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
 
