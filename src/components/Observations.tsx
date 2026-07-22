@@ -555,6 +555,46 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
     </div>
   )}
 </div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Top Problematic Stations
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Stations ranked by number of open observations.
+  </p>
+
+  {topProblematicStations.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No open observations found.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {topProblematicStations.map(([stationName, count]) => (
+        <div
+          key={stationName}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50 flex items-center justify-between"
+        >
+          <div>
+            <p className="text-sm font-semibold text-slate-800">
+              {stationName}
+            </p>
+
+            <p className="text-xs text-slate-500 mt-1">
+              Open observations
+            </p>
+          </div>
+
+          <p className="text-xl font-extrabold text-red-600">
+            {count}
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
   <h3 className="text-lg font-bold text-slate-900 mb-3">
     Top Problematic Stations
