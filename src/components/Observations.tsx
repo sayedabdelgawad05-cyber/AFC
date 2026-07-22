@@ -259,15 +259,60 @@ const filteredObservations = observations.filter((item) => {
     item => item.status === 'Closed'
   ).length;
 
+const getObservationPattern = (text: string) => {
+  const normalized = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (
+    normalized.includes('missing connection') ||
+    (normalized.includes('cable tray') && normalized.includes('conduit'))
+  ) {
+    return 'Missing connection between cable tray and conduit';
+  }
+
+  if (
+    normalized.includes('sharp') ||
+    normalized.includes('bend') ||
+    normalized.includes('radius') ||
+    normalized.includes('fitting')
+  ) {
+    return 'Sharp bends / cable tray fitting radius issue';
+  }
+
+  if (
+    normalized.includes('systra to guarantee') ||
+    normalized.includes('connection between the conduits and cable trays')
+  ) {
+    return 'SYSTRA to guarantee cable tray and conduit connection';
+  }
+
+  if (
+    normalized.includes('embedded conduits') ||
+    normalized.includes('not presented')
+  ) {
+    return 'Embedded conduits missing or not presented';
+  }
+
+  if (
+    normalized.includes('door opening') ||
+    normalized.includes('technical rooms')
+  ) {
+    return 'Technical room door opening direction issue';
+  }
+
+  return normalized
+    .split(' ')
+    .slice(0, 10)
+    .join(' ');
+};
+
 const repeatedObservationMap: Record<string, number> = {};
 
 observations.forEach((item) => {
-  const key = item.observation
-    .toLowerCase()
-    .replace(/[^\w\s]/g, '')
-    .split(' ')
-    .slice(0, 8)
-    .join(' ');
+  const key = getObservationPattern(item.observation);
 
   if (key.trim()) {
     repeatedObservationMap[key] = (repeatedObservationMap[key] || 0) + 1;
@@ -278,7 +323,6 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
   .filter(([_, count]) => count > 1)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 5);
-
   return (
     <div className="space-y-6">
 
@@ -349,35 +393,6 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
             </h3>
           </div>
 
-{repeatedObservations.length > 0 && (
-  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
-    <h3 className="text-lg font-bold text-slate-900 mb-3">
-      Most Repeated Observations
-    </h3>
-
-    <p className="text-sm text-slate-500 mb-4">
-      Similar observation patterns detected from imported and manual observations.
-    </p>
-
-    <div className="space-y-3">
-      {repeatedObservations.map(([text, count]) => (
-        <div
-          key={text}
-          className="border border-slate-200 rounded-xl p-3 bg-slate-50"
-        >
-          <p className="text-sm font-semibold text-slate-800">
-            {text}
-          </p>
-
-          <p className="text-xs text-slate-500 mt-1">
-            Repeated {count} times
-          </p>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
-
           <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
             <p className="text-xs text-red-600 font-bold uppercase">
               Open Observations
@@ -397,7 +412,38 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
           </div>
 
         </div>
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Most Repeated Observations
+  </h3>
 
+  <p className="text-sm text-slate-500 mb-4">
+    Similar observation patterns detected from imported and manual observations.
+  </p>
+
+  {repeatedObservations.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No repeated observation patterns detected yet.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {repeatedObservations.map(([text, count]) => (
+        <div
+          key={text}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+        >
+          <p className="text-sm font-semibold text-slate-800">
+            {text}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Repeated {count} times
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
