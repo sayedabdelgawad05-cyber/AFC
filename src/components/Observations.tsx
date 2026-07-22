@@ -349,6 +349,35 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
             </h3>
           </div>
 
+{repeatedObservations.length > 0 && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Most Repeated Observations
+    </h3>
+
+    <p className="text-sm text-slate-500 mb-4">
+      Similar observation patterns detected from imported and manual observations.
+    </p>
+
+    <div className="space-y-3">
+      {repeatedObservations.map(([text, count]) => (
+        <div
+          key={text}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+        >
+          <p className="text-sm font-semibold text-slate-800">
+            {text}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Repeated {count} times
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
           <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
             <p className="text-xs text-red-600 font-bold uppercase">
               Open Observations
