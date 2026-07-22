@@ -37,6 +37,10 @@ export default function Dashboard({
   const openRfisCount = rfis.filter(r => r.status === 'Open').length;
   const openNcrsCount = ncrs.filter(n => n.status === 'Open').length;
   const openPunchesCount = punches.filter(p => p.status === 'Open').length;
+const delayedTasksTotal = stations.reduce(
+  (acc, st) => acc + (st.delayedTasksCount || 0),
+  0
+);
 const totalDocuments = documents.length;
 
 const revisedDocuments = documents.filter(
