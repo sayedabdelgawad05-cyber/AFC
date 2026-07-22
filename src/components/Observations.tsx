@@ -47,115 +47,6 @@ const handleImportWordFile = async () => {
     return;
   }
 
-const handleCreateObservationsFromText = () => {
-  if (!importedText.trim()) {
-    alert('Please import a Word file first.');
-    return;
-  }
-
-  const text = importedText;
-
-  const sheetNumberMatch = text.match(/Observation Sheet Number:\s*([\s\S]*?)Observation Sheet Title:/i);
-  const titleMatch = text.match(/Observation Sheet Title:\s*([\s\S]*?)Document Supplier:/i);
-  const revisionMatch = text.match(/Observation Sheet Revision:\s*([\s\S]*?)Aconex Reference Number/i);
-
-  const sheetNumber = sheetNumberMatch
-    ? sheetNumberMatch[1].trim().split('\n').filter(Boolean).pop() || ''
-    : '';
-
-  const sheetTitle = titleMatch
-    ? titleMatch[1].trim()
-    : '';
-
-  const revision = revisionMatch
-    ? revisionMatch[1].trim().split('\n').filter(Boolean).pop() || ''
-    : '';
-
-  let detectedStation = station;
-
-  if (sheetTitle.toLowerCase().includes('wadi')) {
-    detectedStation = 'Wadi El Natroun';
-  } else if (sheetTitle.toLowerCase().includes('sadat')) {
-    detectedStation = 'Sadat';
-  } else if (sheetTitle.toLowerCase().includes('cairo')) {
-    detectedStation = 'Cairo';
-  } else if (sheetTitle.toLowerCase().includes('giza')) {
-    detectedStation = 'Giza';
-  } else if (sheetTitle.toLowerCase().includes('new capital')) {
-    detectedStation = 'New Capital';
-  }
-
-  let detectedLevel = level;
-
-  if (sheetTitle.toLowerCase().includes('ground')) {
-    detectedLevel = 'Ground Floor';
-  } else if (sheetTitle.toLowerCase().includes('first')) {
-    detectedLevel = 'First Floor';
-  } else if (sheetTitle.toLowerCase().includes('mezzanine')) {
-    detectedLevel = 'Mezzanine';
-  }
-
-  const lines = text
-    .split('\n')
-    .map(line => line.trim())
-    .filter(Boolean);
-
-  const createdItems: ObservationItem[] = [];
-
-  for (let i = 0; i < lines.length; i++) {
-    const currentLine = lines[i];
-
-    const isItemNumber =
-      /^\d+\.?$/.test(currentLine) ||
-      /^Item\s*\d+/i.test(currentLine);
-
-    if (isItemNumber) {
-      const itemNo = currentLine.replace('Item', '').replace('.', '').trim();
-
-      const pageSection = lines[i + 1] || detectedLevel || 'Not specified';
-
-      const nextBlock = lines
-        .slice(i + 2, i + 12)
-        .join(' ');
-
-      const statusFromBlock = nextBlock.toLowerCase().includes('closed')
-        ? 'Closed'
-        : 'Open';
-
-      const impactFromBlock = nextBlock.includes('Minor') || nextBlock.includes('m')
-        ? 'Minor'
-        : 'Major';
-
-      const observationText = nextBlock || 'Observation extracted from Word file.';
-
-      const newItem: ObservationItem = {
-        id: Date.now() + i,
-        station: detectedStation || 'Unknown Station',
-        level: pageSection,
-        discipline: 'SOAC',
-        observation: observationText,
-        reply: '',
-        status: statusFromBlock,
-        impact: impactFromBlock,
-        date: new Date().toLocaleDateString()
-      };
-
-      createdItems.push(newItem);
-    }
-  }
-
-  if (createdItems.length === 0) {
-    alert('No observation items were detected automatically. We may need to adjust the parser for this file format.');
-    return;
-  }
-
-  const updated = [...observations, ...createdItems];
-
-  saveObservations(updated);
-
-  alert(`Imported ${createdItems.length} observations successfully.`);
-};
-
   try {
     const arrayBuffer = await selectedWordFile.arrayBuffer();
 
@@ -172,36 +63,161 @@ const handleCreateObservationsFromText = () => {
   }
 };
 
-  const handleAddObservation = () => {
-    if (!station.trim() || !observation.trim()) {
-      alert('Please enter station and observation.');
-      return;
+const handleCreateObservationsFromText = () => {
+  if (!importedText.trim()) {
+    alert('Please import a Word file first.');
+    return;
+  }
+
+  const lines = importedText
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  let detectedStation = station || 'Unknown Station';
+  let detectedLevel = level || 'Not specified';
+
+  const fullText = importedText.toLowerCase();
+
+  if (fullText.includes('wadi')) {
+    detectedStation = 'Wadi El Natroun';
+  } else if (fullText.includes('sadat')) {
+    detectedStation = 'Sadat';
+  } else if (fullText.includes('cairo')) {
+    detectedStation = 'Cairo';
+  } else if (fullText.includes('giza')) {
+    detectedStation = 'Giza';
+  } else if (fullText.includes('new capital')) {
+    detectedStation = 'New Capital';
+  }
+
+  if (fullText.includes('ground floor')) {
+    detectedLevel = 'Ground Floor';
+  } else if (fullText.includes('first floor')) {
+    detectedLevel = 'First Floor';
+  } else if (fullText.includes('mezzanine')) {
+    detectedLevel = 'Mezzanine';
+  }
+
+  const createdItems: ObservationItem[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const isItemNumber = /^\d+\.?$/.test(lines[i]);
+
+    if (isItemNumber) {
+      let nextItemIndex = lines.findIndex((line, index) => {
+        return index > i && /^\d+\.?$/.test(line);
+      });
+
+      if (nextItemIndex === -1) {
+        nextItemIndex = Math.min(i + 40, lines.length);
+      }
+
+      const block = lines.slice(i, nextItemIndex);
+
+      const pageSection = block[1] || detectedLevel;
+
+      const impactIndex = block.findIndex(line =>
+        line === 'M' || line === 'm'
+      );
+
+      const statusIndex = block.findIndex(line =>
+        line.toLowerCase() === 'open' ||
+        line.toLowerCase() === 'closed'
+      );
+
+      const impactValue =
+        impactIndex !== -1 && block[impactIndex] === 'm'
+          ? 'Minor'
+          : 'Major';
+
+      const statusValue =
+        statusIndex !== -1 &&
+        block[statusIndex].toLowerCase() === 'closed'
+          ? 'Closed'
+          : 'Open';
+
+      const observationStart = 2;
+
+      const observationEnd =
+        impactIndex !== -1 ? impactIndex : Math.min(block.length, 12);
+
+      const replyStart =
+        impactIndex !== -1 ? impactIndex + 1 : observationEnd;
+
+      const replyEnd =
+        statusIndex !== -1 ? statusIndex : block.length;
+
+      const observationText = block
+        .slice(observationStart, observationEnd)
+        .join(' ')
+        .trim();
+
+      const replyText = block
+        .slice(replyStart, replyEnd)
+        .join(' ')
+        .trim();
+
+      if (observationText) {
+        const newItem: ObservationItem = {
+          id: Date.now() + i,
+          station: detectedStation,
+          level: pageSection,
+          discipline: 'SOAC',
+          observation: observationText,
+          reply: replyText,
+          status: statusValue,
+          impact: impactValue,
+          date: new Date().toLocaleDateString()
+        };
+
+        createdItems.push(newItem);
+      }
     }
+  }
 
-    const newItem: ObservationItem = {
-      id: Date.now(),
-      station,
-      level,
-      discipline,
-      observation,
-      reply,
-      status,
-      impact,
-      date: new Date().toLocaleDateString()
-    };
+  if (createdItems.length === 0) {
+    alert('No observations were detected. Parser needs adjustment for this file format.');
+    return;
+  }
 
-    const updated = [...observations, newItem];
+  const updated = [...observations, ...createdItems];
 
-    saveObservations(updated);
+  saveObservations(updated);
 
-    setStation('');
-    setLevel('');
-    setDiscipline('AFC');
-    setObservation('');
-    setReply('');
-    setStatus('Open');
-    setImpact('Major');
+  alert(`Imported ${createdItems.length} observations successfully.`);
+};
+
+const handleAddObservation = () => {
+  if (!station.trim() || !observation.trim()) {
+    alert('Please enter station and observation.');
+    return;
+  }
+
+  const newItem: ObservationItem = {
+    id: Date.now(),
+    station,
+    level,
+    discipline,
+    observation,
+    reply,
+    status,
+    impact,
+    date: new Date().toLocaleDateString()
   };
+
+  const updated = [...observations, newItem];
+
+  saveObservations(updated);
+
+  setStation('');
+  setLevel('');
+  setDiscipline('AFC');
+  setObservation('');
+  setReply('');
+  setStatus('Open');
+  setImpact('Major');
+};
 
   const filteredObservations = observations.filter((item) => {
     const search = searchTerm.toLowerCase();
