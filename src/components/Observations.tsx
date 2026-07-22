@@ -16,6 +16,7 @@ interface ObservationItem {
 export default function Observations() {
   const [observations, setObservations] = useState<ObservationItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+   const [statusFilter, setStatusFilter] = useState<'All' | 'Open' | 'Closed'>('All');
    const [selectedWordFile, setSelectedWordFile] = useState<File | null>(null);
    const [importedText, setImportedText] = useState('');
 
@@ -232,19 +233,23 @@ const handleToggleObservationStatus = (id: number) => {
   saveObservations(updated);
 };
 
-  const filteredObservations = observations.filter((item) => {
-    const search = searchTerm.toLowerCase();
+const filteredObservations = observations.filter((item) => {
+  const search = searchTerm.toLowerCase();
 
-    return (
-      item.station.toLowerCase().includes(search) ||
-      item.level.toLowerCase().includes(search) ||
-      item.discipline.toLowerCase().includes(search) ||
-      item.observation.toLowerCase().includes(search) ||
-      item.reply.toLowerCase().includes(search) ||
-      item.status.toLowerCase().includes(search) ||
-      item.impact.toLowerCase().includes(search)
-    );
-  });
+  const matchesSearch =
+    item.station.toLowerCase().includes(search) ||
+    item.level.toLowerCase().includes(search) ||
+    item.discipline.toLowerCase().includes(search) ||
+    item.observation.toLowerCase().includes(search) ||
+    item.reply.toLowerCase().includes(search) ||
+    item.status.toLowerCase().includes(search) ||
+    item.impact.toLowerCase().includes(search);
+
+  const matchesStatus =
+    statusFilter === 'All' || item.status === statusFilter;
+
+  return matchesSearch && matchesStatus;
+});
 
   const openObservations = observations.filter(
     item => item.status === 'Open'
@@ -461,13 +466,28 @@ const handleToggleObservationStatus = (id: number) => {
           Observations List
         </h3>
 
-        <input
-          type="text"
-          placeholder="Search observations..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full border border-slate-300 rounded-xl px-3 py-2 mb-4"
-        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+
+  <input
+    type="text"
+    placeholder="Search observations..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="md:col-span-2 w-full border border-slate-300 rounded-xl px-3 py-2"
+  />
+
+  <select
+    value={statusFilter}
+    onChange={(e) => setStatusFilter(e.target.value as 'All' | 'Open' | 'Closed')}
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  >
+    <option value="All">All Statuses</option>
+    <option value="Open">Open Only</option>
+    <option value="Closed">Closed Only</option>
+  </select>
+
+</div>
+
 
         {filteredObservations.length === 0 ? (
           <p className="text-slate-500">
