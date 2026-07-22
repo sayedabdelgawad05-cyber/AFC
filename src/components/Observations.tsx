@@ -324,9 +324,7 @@ const getObservationPattern = (text: string) => {
     .split(' ')
     .slice(0, 10)
     .join(' ');
-};
-
-const repeatedObservationMap: Record<string, number> = {};
+};const repeatedObservationMap: Record<string, number> = {};
 
 observations.forEach((item) => {
   const key = getObservationPattern(item.observation);
