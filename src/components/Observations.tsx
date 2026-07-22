@@ -323,6 +323,70 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
   .filter(([_, count]) => count > 1)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 5);
+const getReplyPattern = (text: string) => {
+  const normalized = text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  if (
+    normalized.includes('pending the details') ||
+    normalized.includes('p2 for the connection')
+  ) {
+    return 'Pending details from P2 for cable tray/conduit connection';
+  }
+
+  if (
+    normalized.includes('standard fitting') ||
+    normalized.includes('fittings shall be standard')
+  ) {
+    return 'Standard fittings will be used';
+  }
+
+  if (
+    normalized.includes('has been considered') ||
+    normalized.includes('considered in site')
+  ) {
+    return 'Comment has been considered';
+  }
+
+  if (
+    normalized.includes('not valid') ||
+    normalized.includes('comment is not valid')
+  ) {
+    return 'Contractor response: Comment not valid';
+  }
+
+  if (
+    normalized.includes('as built') ||
+    normalized.includes('as-built')
+  ) {
+    return 'To be considered in as-built drawings';
+  }
+
+  return normalized
+    .split(' ')
+    .slice(0, 10)
+    .join(' ');
+};
+
+const repeatedReplyMap: Record<string, number> = {};
+
+observations.forEach((item) => {
+  if (!item.reply.trim()) return;
+
+  const key = getReplyPattern(item.reply);
+
+  if (key.trim()) {
+    repeatedReplyMap[key] = (repeatedReplyMap[key] || 0) + 1;
+  }
+});
+
+const repeatedReplies = Object.entries(repeatedReplyMap)
+  .filter(([_, count]) => count > 1)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 5);
   return (
     <div className="space-y-6">
 
@@ -444,6 +508,39 @@ const repeatedObservations = Object.entries(repeatedObservationMap)
     </div>
   )}
 </div>
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Most Repeated Contractor Replies
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Similar contractor reply patterns detected from imported and manual observations.
+  </p>
+
+  {repeatedReplies.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No repeated contractor reply patterns detected yet.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {repeatedReplies.map(([text, count]) => (
+        <div
+          key={text}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+        >
+          <p className="text-sm font-semibold text-slate-800">
+            {text}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Repeated {count} times
+          </p>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <div>
