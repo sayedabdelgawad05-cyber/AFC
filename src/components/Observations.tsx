@@ -305,6 +305,18 @@ const stationObservationSummary = Object.entries(
   stationObservationSummaryMap
 ).sort((a, b) => b[1].total - a[1].total);
 
+const disciplineObservationMap: Record<string, number> = {};
+
+observations.forEach((item) => {
+  const disciplineName = item.discipline || 'Unknown';
+
+  disciplineObservationMap[disciplineName] =
+    (disciplineObservationMap[disciplineName] || 0) + 1;
+});
+
+const topDisciplines = Object.entries(disciplineObservationMap)
+  .sort((a, b) => b[1] - a[1]);
+
 const topProblematicStation = topProblematicStations[0];
 
 const getObservationPattern = (text: string) => {
@@ -667,6 +679,39 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
               </p>
             </div>
           </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Top Observation Disciplines
+  </h3>
+
+  <p className="text-sm text-slate-500 mb-4">
+    Disciplines ranked by total observations.
+  </p>
+
+  {topDisciplines.length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No discipline statistics available.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {topDisciplines.map(([discipline, count]) => (
+        <div
+          key={discipline}
+          className="border border-slate-200 rounded-xl p-3 bg-slate-50 flex items-center justify-between"
+        >
+          <span className="font-semibold">
+            {discipline}
+          </span>
+
+          <span className="text-xl font-bold text-indigo-600">
+            {count}
+          </span>
         </div>
       ))}
     </div>
