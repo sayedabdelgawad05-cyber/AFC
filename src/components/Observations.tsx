@@ -47,6 +47,115 @@ const handleImportWordFile = async () => {
     return;
   }
 
+const handleCreateObservationsFromText = () => {
+  if (!importedText.trim()) {
+    alert('Please import a Word file first.');
+    return;
+  }
+
+  const text = importedText;
+
+  const sheetNumberMatch = text.match(/Observation Sheet Number:\s*([\s\S]*?)Observation Sheet Title:/i);
+  const titleMatch = text.match(/Observation Sheet Title:\s*([\s\S]*?)Document Supplier:/i);
+  const revisionMatch = text.match(/Observation Sheet Revision:\s*([\s\S]*?)Aconex Reference Number/i);
+
+  const sheetNumber = sheetNumberMatch
+    ? sheetNumberMatch[1].trim().split('\n').filter(Boolean).pop() || ''
+    : '';
+
+  const sheetTitle = titleMatch
+    ? titleMatch[1].trim()
+    : '';
+
+  const revision = revisionMatch
+    ? revisionMatch[1].trim().split('\n').filter(Boolean).pop() || ''
+    : '';
+
+  let detectedStation = station;
+
+  if (sheetTitle.toLowerCase().includes('wadi')) {
+    detectedStation = 'Wadi El Natroun';
+  } else if (sheetTitle.toLowerCase().includes('sadat')) {
+    detectedStation = 'Sadat';
+  } else if (sheetTitle.toLowerCase().includes('cairo')) {
+    detectedStation = 'Cairo';
+  } else if (sheetTitle.toLowerCase().includes('giza')) {
+    detectedStation = 'Giza';
+  } else if (sheetTitle.toLowerCase().includes('new capital')) {
+    detectedStation = 'New Capital';
+  }
+
+  let detectedLevel = level;
+
+  if (sheetTitle.toLowerCase().includes('ground')) {
+    detectedLevel = 'Ground Floor';
+  } else if (sheetTitle.toLowerCase().includes('first')) {
+    detectedLevel = 'First Floor';
+  } else if (sheetTitle.toLowerCase().includes('mezzanine')) {
+    detectedLevel = 'Mezzanine';
+  }
+
+  const lines = text
+    .split('\n')
+    .map(line => line.trim())
+    .filter(Boolean);
+
+  const createdItems: ObservationItem[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const currentLine = lines[i];
+
+    const isItemNumber =
+      /^\d+\.?$/.test(currentLine) ||
+      /^Item\s*\d+/i.test(currentLine);
+
+    if (isItemNumber) {
+      const itemNo = currentLine.replace('Item', '').replace('.', '').trim();
+
+      const pageSection = lines[i + 1] || detectedLevel || 'Not specified';
+
+      const nextBlock = lines
+        .slice(i + 2, i + 12)
+        .join(' ');
+
+      const statusFromBlock = nextBlock.toLowerCase().includes('closed')
+        ? 'Closed'
+        : 'Open';
+
+      const impactFromBlock = nextBlock.includes('Minor') || nextBlock.includes('m')
+        ? 'Minor'
+        : 'Major';
+
+      const observationText = nextBlock || 'Observation extracted from Word file.';
+
+      const newItem: ObservationItem = {
+        id: Date.now() + i,
+        station: detectedStation || 'Unknown Station',
+        level: pageSection,
+        discipline: 'SOAC',
+        observation: observationText,
+        reply: '',
+        status: statusFromBlock,
+        impact: impactFromBlock,
+        date: new Date().toLocaleDateString()
+      };
+
+      createdItems.push(newItem);
+    }
+  }
+
+  if (createdItems.length === 0) {
+    alert('No observation items were detected automatically. We may need to adjust the parser for this file format.');
+    return;
+  }
+
+  const updated = [...observations, ...createdItems];
+
+  saveObservations(updated);
+
+  alert(`Imported ${createdItems.length} observations successfully.`);
+};
+
   try {
     const arrayBuffer = await selectedWordFile.arrayBuffer();
 
@@ -154,6 +263,13 @@ const handleImportWordFile = async () => {
   >
     Import Word File
   </button>
+
+<button
+  onClick={handleCreateObservationsFromText}
+  className="ml-3 px-5 py-2 bg-teal-500 hover:bg-teal-600 text-slate-950 font-bold rounded-xl"
+>
+  Create Observations
+</button>
 
   {importedText && (
     <div className="mt-4 bg-white border border-slate-200 rounded-xl p-4 max-h-64 overflow-y-auto">
