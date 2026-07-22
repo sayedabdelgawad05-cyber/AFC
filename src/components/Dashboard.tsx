@@ -51,6 +51,45 @@ const afcDocuments = documents.filter(
     doc.discipline.toUpperCase().includes('AFC')
 ).length;
 
+const stationReadiness = stations.map(st => {
+  const score =
+    st.progress -
+    (st.openNCRs * 5) -
+    (st.openRFIs * 2) -
+    (st.openPunches * 1);
+
+  return {
+    ...st,
+    readiness: Math.max(0, Math.min(100, score))
+  };
+});
+
+const stationRiskScores = stations.map(st => {
+  const riskScore =
+    (st.openNCRs * 5) +
+    (st.openRFIs * 2) +
+    (st.openPunches * 1);
+
+  return {
+    ...st,
+    riskScore
+  };
+});
+
+const topRiskStations = [...stationRiskScores]
+  .sort((a, b) => b.riskScore - a.riskScore)
+  .slice(0, 5);
+
+const engineeringHealthScore =
+  stationReadiness.length > 0
+    ? Math.round(
+        stationReadiness.reduce(
+          (acc, st) => acc + st.readiness,
+          0
+        ) / stationReadiness.length
+      )
+    : 0;
+
   // Critical items
   const criticalNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Critical');
   const majorNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Major');
@@ -234,6 +273,83 @@ const afcDocuments = documents.filter(
         </div>
       </div>
 
+    ))}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+  <h3 className="text-lg font-bold">
+    Engineering Health Score
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1">
+    Overall project engineering status
+  </p>
+
+  <div className="mt-4">
+
+    <span
+      className={`text-4xl font-extrabold ${
+        engineeringHealthScore >= 80
+          ? 'text-green-600'
+          : engineeringHealthScore >= 60
+          ? 'text-amber-500'
+          : 'text-red-600'
+      }`}
+    >
+      {engineeringHealthScore}%
+    </span>
+
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Top Risk Stations
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Stations ranked by open NCRs (Non-Conformance Reports), RFIs (Requests for Information), and Punch Items.
+  </p>
+
+  <div className="space-y-3">
+    {topRiskStations.map((st) => (
+      <div
+        key={st.id}
+        className="border border-slate-100 rounded-xl p-3 flex items-center justify-between"
+      >
+        <div>
+          <h4 className="font-semibold text-slate-900">
+            {st.nameEn}
+          </h4>
+
+          <p className="text-xs text-slate-500">
+            NCRs (Non-Conformance Reports): {st.openNCRs} | RFIs (Requests for Information): {st.openRFIs} | Punch Items: {st.openPunches}
+          </p>
+        </div>
+
+        <div className="text-right">
+          <p className="text-xs text-slate-500">
+            Risk Score
+          </p>
+
+          <p
+            className={`text-xl font-bold ${
+              st.riskScore >= 20
+                ? 'text-red-600'
+                : st.riskScore >= 10
+                ? 'text-amber-500'
+                : 'text-green-600'
+            }`}
+          >
+            {st.riskScore}
+          </p>
+        </div>
+      </div>
     ))}
   </div>
 
