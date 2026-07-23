@@ -287,6 +287,18 @@ const importBatchId = `batch-${Date.now()}`;
 const sourceFileName = selectedWordFile
   ? selectedWordFile.name
   : 'Unknown File';
+const alreadyImported = observations.some(
+  item => item.sourceFileName === sourceFileName
+);
+
+if (alreadyImported) {
+  const confirmed = window.confirm(
+    'This file was already imported before. Do you want to continue?'
+  );
+
+  if (!confirmed) return;
+}
+
 
   const isItemNumberLine = (line: string) => {
     return /^\d+\.?$/.test(line.trim());
