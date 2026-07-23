@@ -11,6 +11,13 @@ interface ObservationItem {
   status: 'Open' | 'Closed';
   impact: 'Major' | 'Minor';
   date: string;
+
+  sheetNumber?: string;
+  sheetTitle?: string;
+  revision?: string;
+  aconexReference?: string;
+  sourceFileName?: string;
+  importBatchId?: string;
 }
 
 export default function Observations() {
@@ -275,6 +282,45 @@ if (containsAny([
 ])) {
   detectedLevel = 'Roof';
 }
+const extractBetween = (text: string, start: string, end: string) => {
+  const regex = new RegExp(`${start}([\\s\\S]*?)${end}`, 'i');
+  const match = text.match(regex);
+
+  return match
+    ? match[1].trim().split('\n').filter(Boolean).pop()?.trim() || ''
+    : '';
+};
+
+const sheetNumber = extractBetween(
+  importedText,
+  'Observation Sheet Number:',
+  'Observation Sheet Title:'
+);
+
+const sheetTitle = extractBetween(
+  importedText,
+  'Observation Sheet Title:',
+  'Document Supplier:'
+);
+
+const revision = extractBetween(
+  importedText,
+  'Observation Sheet Revision:',
+  'Aconex Reference Number'
+);
+
+const aconexReference = extractBetween(
+  importedText,
+  'Aconex Reference Number:',
+  'Receiving Date:'
+);
+
+const importBatchId = `batch-${Date.now()}`;
+
+const sourceFileName = selectedWordFile
+  ? selectedWordFile.name
+  : 'Unknown File';
+
   const isItemNumberLine = (line: string) => {
     return /^\d+\.?$/.test(line.trim());
   };
@@ -380,16 +426,24 @@ if (containsAny([
     if (!observationText) continue;
 
     const newItem: ObservationItem = {
-      id: Date.now() + i,
-      station: detectedStation,
-      level: pageSection || detectedLevel,
-      discipline: 'SOAC',
-      observation: observationText,
-      reply: replyText,
-      status: statusValue,
-      impact: impactValue,
-      date: new Date().toLocaleDateString()
-    };
+  id: Date.now() + i,
+  station: detectedStation,
+  level: pageSection || detectedLevel,
+  discipline: 'SOAC',
+  observation: observationText,
+  reply: replyText,
+  status: statusValue,
+  impact: impactValue,
+  date: new Date().toLocaleDateString(),
+
+  sheetNumber,
+  sheetTitle,
+  revision,
+  aconexReference,
+  sourceFileName,
+  importBatchId
+};
+
 
     createdItems.push(newItem);
   }
