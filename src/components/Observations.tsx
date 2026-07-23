@@ -26,7 +26,7 @@ export default function Observations() {
    const [statusFilter, setStatusFilter] = useState<'All' | 'Open' | 'Closed'>('All');
    const [selectedWordFile, setSelectedWordFile] = useState<File | null>(null);
    const [importedText, setImportedText] = useState('');
-
+     const [lastImportSummary, setLastImportSummary] = useState<any | null>(null);
 
   const [station, setStation] = useState('');
   const [level, setLevel] = useState('');
@@ -540,6 +540,15 @@ if (createdItems.length === 0) {
 
       saveObservations(updated);
 
+setLastImportSummary({
+  fileName: sourceFileName,
+  count: fallbackItems.length,
+  station: detectedStation,
+  level: detectedLevel,
+  revision,
+  sheetNumber,
+  aconexReference
+});
       alert(`Imported ${fallbackItems.length} observations using date-based parser.`);
 
       return;
@@ -589,16 +598,37 @@ if (createdItems.length === 0) {
 
   saveObservations(updated);
 
+setLastImportSummary({
+  fileName: sourceFileName,
+  count: 1,
+  station: detectedStation,
+  level: detectedLevel,
+  revision,
+  sheetNumber,
+  aconexReference
+});
+
   alert('Imported 1 observation using fallback parser.');
 
   return;
 }
 
-  const updated = [...observations, ...createdItems];
+const updated = [...observations, ...createdItems];
 
-  saveObservations(updated);
+saveObservations(updated);
 
-  alert(`Imported ${createdItems.length} observations successfully.`);
+setLastImportSummary({
+  fileName: sourceFileName,
+  count: createdItems.length,
+  station: detectedStation,
+  level: detectedLevel,
+  revision,
+  sheetNumber,
+  aconexReference
+});
+
+alert(`Imported ${createdItems.length} observations successfully.`);
+
 };
 
 const handleAddObservation = () => {
@@ -964,6 +994,46 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
     </div>
   )}
 </div>
+
+
+{lastImportSummary && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Last Import Summary
+    </h3>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-slate-700">
+      <p>
+        <strong>File:</strong> {lastImportSummary.fileName}
+      </p>
+
+      <p>
+        <strong>Imported Observations:</strong> {lastImportSummary.count}
+      </p>
+
+      <p>
+        <strong>Station:</strong> {lastImportSummary.station}
+      </p>
+
+      <p>
+        <strong>Level:</strong> {lastImportSummary.level}
+      </p>
+
+      <p>
+        <strong>Revision:</strong> {lastImportSummary.revision || 'Not captured'}
+      </p>
+
+      <p>
+        <strong>Sheet No.:</strong> {lastImportSummary.sheetNumber || 'Not captured'}
+      </p>
+
+      <p className="md:col-span-2">
+        <strong>Aconex Ref.:</strong> {lastImportSummary.aconexReference || 'Not captured'}
+      </p>
+    </div>
+  </div>
+)}
+
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
