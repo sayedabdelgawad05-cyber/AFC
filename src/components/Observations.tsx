@@ -26,6 +26,7 @@ export default function Observations() {
    const [statusFilter, setStatusFilter] = useState<'All' | 'Open' | 'Closed'>('All');
    const [selectedWordFile, setSelectedWordFile] = useState<File | null>(null);
    const [importedText, setImportedText] = useState('');
+     const [showExtractedText, setShowExtractedText] = useState(false);
      const [lastImportSummary, setLastImportSummary] = useState<any | null>(null);
 
   const [station, setStation] = useState('');
@@ -995,15 +996,26 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
 </button>
 
   {importedText && (
-    <div className="mt-4 bg-white border border-slate-200 rounded-xl p-4 max-h-64 overflow-y-auto">
-      <h4 className="font-bold mb-2">
-        Extracted Text Preview
-      </h4>
+  <div className="mt-4">
+    <button
+      onClick={() => setShowExtractedText(!showExtractedText)}
+      className="px-4 py-2 bg-slate-700 hover:bg-slate-900 text-white font-bold rounded-xl"
+    >
+      {showExtractedText ? 'Hide Extracted Text' : 'Show Extracted Text'}
+    </button>
 
-      <pre className="text-xs whitespace-pre-wrap text-slate-700">
-        {importedText}
-      </pre>
-    </div>
+    {showExtractedText && (
+      <div className="mt-4 bg-white border border-slate-200 rounded-xl p-4 max-h-64 overflow-y-auto">
+        <h4 className="font-bold mb-2">
+          Extracted Text Preview
+        </h4>
+
+        <pre className="text-xs whitespace-pre-wrap text-slate-700">
+          {importedText}
+        </pre>
+      </div>
+    )}
+  </div>
   )}
 </div>
 
