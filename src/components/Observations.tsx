@@ -956,6 +956,9 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
         <h2 className="text-xl font-bold text-slate-900 mb-2">
           Observation Register
         </h2>
+<div className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-bold mb-4">
+  Observation Module Phase 2 Completed
+</div>
 
         <p className="text-slate-500 mb-6">
           Register and track station observations, contractor replies, status, and impact.
