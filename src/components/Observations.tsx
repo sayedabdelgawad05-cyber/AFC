@@ -86,7 +86,10 @@ const handleCreateObservationsFromText = () => {
 let detectedStation = station || 'Unknown Station';
 let detectedLevel = level || 'Not specified';
 
-const detectionText = lines.slice(0, 150).join(' ').toLowerCase();
+const detectionText = [
+  selectedWordFile ? selectedWordFile.name : '',
+  lines.slice(0, 150).join(' ')
+].join(' ').toLowerCase();
 
 const containsAny = (keywords: string[]) => {
   return keywords.some(keyword => detectionText.includes(keyword));
@@ -99,53 +102,62 @@ if (containsAny([
   'ain al sokhna',
   'ain al shokhna',
   'sokhna',
-  'shokhna'
+  'shokhna',
+  'gla01'
 ])) {
   detectedStation = 'Ain Sokhna';
 } else if (containsAny([
   'new capital',
   'new administrative capital',
-  'capital station'
+  'capital station',
+  'glb02'
 ])) {
   detectedStation = 'New Capital';
 } else if (containsAny([
   'mohamed naguib',
   'mohamed nageeb',
   'ahmed omar hashem',
-  'ahmed omar hashim'
+  'ahmed omar hashim',
+  'glb03'
 ])) {
   detectedStation = 'Mohamed Naguib';
 } else if (containsAny([
   'cairo station',
-  'cairo'
+  'cairo',
+  'glb04'
 ])) {
   detectedStation = 'Cairo';
 } else if (containsAny([
   'giza station',
-  'giza'
+  'giza',
+  'glb05'
 ])) {
   detectedStation = 'Giza';
 } else if (containsAny([
   'october gardens',
   'october garden',
-  'gardens october'
+  'gardens october',
+  'glc06'
 ])) {
   detectedStation = 'October Gardens';
 } else if (containsAny([
   '6th october',
   '6 october',
   'sixth october',
-  '6th of october'
+  '6th of october',
+  'gld07'
 ])) {
   detectedStation = '6 October';
 } else if (containsAny([
-  'sphinx'
+  'sphinx',
+  'gle08'
 ])) {
   detectedStation = 'Sphinx';
 } else if (containsAny([
   'el sadat',
   'al sadat',
-  'sadat'
+  'sadat',
+  'gle09'
 ])) {
   detectedStation = 'Sadat';
 } else if (containsAny([
@@ -153,7 +165,8 @@ if (containsAny([
   'wadi el natrun',
   'wadi al natroun',
   'wadi al natrun',
-  'wadi'
+  'wadi el-natroun',
+  'gle10'
 ])) {
   detectedStation = 'Wadi El Natroun';
 } else if (containsAny([
@@ -161,21 +174,24 @@ if (containsAny([
   'noubaria',
   'el noubarya',
   'al noubarya',
-  'noubariya'
+  'noubariya',
+  'glf11'
 ])) {
   detectedStation = 'Noubarya';
 } else if (containsAny([
   'alexandria army stadium',
   'alexandria (army stadium)',
   'army stadium',
-  'alexandria'
+  'alexandria',
+  'gle12'
 ])) {
   detectedStation = 'Army Stadium';
 } else if (containsAny([
   'borg el arab',
   'borj el arab',
   'borg al arab',
-  'borj al arab'
+  'borj al arab',
+  'glg13'
 ])) {
   detectedStation = 'Borg El Arab';
 } else if (containsAny([
@@ -184,7 +200,8 @@ if (containsAny([
   'el hamam',
   'al hamam',
   'el hammam',
-  'al hammam'
+  'al hammam',
+  'glg14'
 ])) {
   detectedStation = 'Hammam';
 } else if (containsAny([
@@ -192,14 +209,16 @@ if (containsAny([
   'alameen',
   'el alamein',
   'el alameen',
-  'al alameen'
+  'al alameen',
+  'glh15'
 ])) {
   detectedStation = 'Alamein';
 } else if (containsAny([
   'sidi abdelrahman',
   'sidi abdel rahman',
   'sidi abdul rahman',
-  'sidi'
+  'sidi',
+  'gli16'
 ])) {
   detectedStation = 'Sidi Abdelrahman';
 } else if (containsAny([
@@ -207,7 +226,8 @@ if (containsAny([
   'daaba',
   'el dabaa',
   'al daaba',
-  'el daaba'
+  'el daaba',
+  'gli17'
 ])) {
   detectedStation = 'Dabaa';
 } else if (containsAny([
@@ -215,73 +235,20 @@ if (containsAny([
   'ras al hakma',
   'ras el heikma',
   'ras el hikma',
-  'ras hekma'
+  'ras hekma',
+  'glm19'
 ])) {
   detectedStation = 'Ras El Hekma';
 } else if (containsAny([
   'marsa matrouh',
   'marsa matruh',
   'matrouh',
-  'matruh'
+  'matruh',
+  'glm21'
 ])) {
   detectedStation = 'Matrouh';
 }
 
-// Level Detection
-if (containsAny([
-  'lower ground',
-  'lower ground floor',
-  'lg',
-  'l.g',
-  'lg floor',
-  'l.ground',
-  'l ground',
-  'lower g',
-  'lower-ground',
-  'lowerground'
-])) {
-  detectedLevel = 'Lower Ground';
-} else if (containsAny([
-  'ground floor',
-  'gr',
-  'gr-',
-  'gr ',
-  'g.floor',
-  'g floor',
-  'gf',
-  'g.f',
-  'ground'
-])) {
-  detectedLevel = 'Ground';
-} else if (containsAny([
-  'mezzanine',
-  'mezzanine floor',
-  'mz',
-  'mz-',
-  'mz ',
-  'mezz',
-  'mez'
-])) {
-  detectedLevel = 'Mezzanine';
-} else if (containsAny([
-  'first floor',
-  'fr',
-  'fr-',
-  'fr ',
-  '1st floor',
-  'first',
-  'f.floor',
-  'f floor',
-  'ff',
-  'f.f'
-])) {
-  detectedLevel = 'First';
-} else if (containsAny([
-  'roof',
-  'roof floor'
-])) {
-  detectedLevel = 'Roof';
-}
 const extractBetween = (text: string, start: string, end: string) => {
   const regex = new RegExp(`${start}([\\s\\S]*?)${end}`, 'i');
   const match = text.match(regex);
@@ -324,6 +291,74 @@ const sourceFileName = selectedWordFile
   const isItemNumberLine = (line: string) => {
     return /^\d+\.?$/.test(line.trim());
   };
+
+// Level Detection
+if (containsAny([
+  'lower ground',
+  'lower ground floor',
+  'lg',
+  'lg ',
+  'lg-',
+  'l.g',
+  'l.g.',
+  'lg floor',
+  'l.ground',
+  'l ground',
+  'lower g',
+  'lower-ground',
+  'lowerground'
+])) {
+  detectedLevel = 'Lower Ground';
+} else if (containsAny([
+  'ground floor',
+  'gr',
+  'gr ',
+  'gr-',
+  'g.floor',
+  'g floor',
+  'gf',
+  'g.f',
+  'g.f.',
+  'ground'
+])) {
+  detectedLevel = 'Ground';
+} else if (containsAny([
+  'mezzanine',
+  'mezzanine floor',
+  'mz',
+  'mz ',
+  'mz-',
+  'm.z',
+  'm.z.',
+  'mezz',
+  'mez'
+])) {
+  detectedLevel = 'Mezzanine';
+} else if (containsAny([
+  'first floor',
+  'fr',
+  'fr ',
+  'fr-',
+  '1st floor',
+  'first',
+  'f.floor',
+  'f floor',
+  'ff',
+  'f.f',
+  'f.f.'
+])) {
+  detectedLevel = 'First';
+} else if (containsAny([
+  'roof',
+  'roof floor',
+  'roof level',
+  'rf',
+  'r.f',
+  'r.f.'
+])) {
+  detectedLevel = 'Roof';
+}
+
 
   const createdItems: ObservationItem[] = [];
 
