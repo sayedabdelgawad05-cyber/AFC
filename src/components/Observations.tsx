@@ -450,6 +450,25 @@ const handleToggleObservationStatus = (id: number) => {
   saveObservations(updated);
 };
 
+const handleDeleteObservation = (id: number) => {
+  const updated = observations.filter(
+    item => item.id !== id
+  );
+
+  saveObservations(updated);
+};
+const handleClearAllObservations = () => {
+  const confirmed = window.confirm(
+    'Delete all observations?'
+  );
+
+  if (!confirmed) return;
+
+  localStorage.removeItem('hsr_observations');
+
+  setObservations([]);
+};
+
 const filteredObservations = observations.filter((item) => {
   const search = searchTerm.toLowerCase();
 
@@ -1112,6 +1131,13 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
         >
           Add Observation
         </button>
+<button
+  onClick={handleClearAllObservations}
+  className="mt-5 ml-3 px-5 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl"
+>
+  Clear All Observations
+</button>
+
       </div>
 
       <div className="bg-white border border-slate-200 rounded-3xl p-6">
@@ -1186,6 +1212,13 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
   }`}
 >
   {item.status === 'Open' ? 'Close' : 'Reopen'}
+</button>
+
+<button
+  onClick={() => handleDeleteObservation(item.id)}
+  className="ml-2 text-xs font-bold px-3 py-1 rounded-full bg-slate-700 text-white hover:bg-slate-900"
+>
+  Delete
 </button>
 
                 </div>

@@ -94,7 +94,7 @@ const mostRfiStation = [...stations].sort(
 const mostPunchStation = [...stations].sort(
   (a, b) => b.openPunches - a.openPunches
 )[0];
-``
+
 const engineeringHealthScore =
   stationReadiness.length > 0
     ? Math.round(
@@ -106,10 +106,78 @@ const engineeringHealthScore =
     : 0;
 
   // Critical items
-  const criticalNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Critical');
-  const majorNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Major');
+const criticalNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Critical');
+const majorNcrs = ncrs.filter(n => n.status === 'Open' && n.priority === 'Major');
 
-  return (
+const observations = JSON.parse(
+  localStorage.getItem('hsr_observations') || '[]'
+);
+
+const openObservations = observations.filter(
+  (item: any) => item.status === 'Open'
+).length;
+
+const closedObservations = observations.filter(
+  (item: any) => item.status === 'Closed'
+).length;
+
+const stationObservationCounts: Record<string, number> = {};
+
+observations.forEach((item: any) => {
+  if (item.status !== 'Open') return;
+
+  stationObservationCounts[item.station] =
+    (stationObservationCounts[item.station] || 0) + 1;
+});
+
+const topObservationStation = Object.entries(stationObservationCounts)
+  .sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+const observationPatternMap: Record<string, number> = {};
+
+observations.forEach((item: any) => {
+  const key = item.observation
+    ?.toLowerCase()
+    ?.replace(/[^\w\s]/g, '')
+    ?.split(' ')
+    ?.slice(0, 8)
+    ?.join(' ');
+
+  if (!key) return;
+
+  observationPatternMap[key] =
+    (observationPatternMap[key] || 0) + 1;
+});
+
+const mostRepeatedObservation = Object.entries(
+  observationPatternMap
+)
+  .sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+const lessonsLearnedCount = Object.entries(
+  observationPatternMap
+).filter(([_, count]) => Number(count) > 1).length;
+
+const engineeringSummary = `
+${openObservations} observations remain open.
+
+${closedObservations} observations have been closed.
+
+${
+  topObservationStation
+    ? `${topObservationStation[0]} currently has the highest number of open observations.`
+    : 'No problematic station identified.'
+}
+
+${
+  mostRepeatedObservation
+    ? `Most repeated issue: ${mostRepeatedObservation[0]}.`
+    : 'No repeated issue detected.'
+}
+
+${lessonsLearnedCount} lessons learned have been identified.
+`;
+
+return (
+
     <div id="dashboard_panel" className="space-y-6">
       {/* Welcome Banner */}
       <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 relative overflow-hidden shadow-md">
@@ -435,6 +503,30 @@ const engineeringHealthScore =
   </div>
 )}
 
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Open Observations
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {openObservations}
+    </h3>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Closed Observations
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {closedObservations}
+    </h3>
+  </div>
+
+</div>
+
 <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
 
   <h3 className="text-lg font-bold text-slate-900">
@@ -483,6 +575,106 @@ const engineeringHealthScore =
   </div>
 
 </div>
+
+{topObservationStation && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Top Problematic Station
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1 mb-4">
+      Station with the highest number of open observations
+    </p>
+
+    <div className="flex items-center justify-between">
+
+      <div>
+        <p className="text-xl font-extrabold text-slate-900">
+          {topObservationStation[0]}
+        </p>
+      </div>
+
+      <div className="text-right">
+        <p className="text-xs text-slate-500">
+          Open Observations
+        </p>
+
+        <p className="text-3xl font-extrabold text-red-600">
+          {topObservationStation[1]}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+)}
+{mostRepeatedObservation && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Most Repeated Observation
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1 mb-4">
+      Most common observation pattern across imported files
+    </p>
+
+    <div>
+
+      <p className="text-sm font-semibold text-slate-900">
+        {mostRepeatedObservation[0]}
+      </p>
+
+      <p className="text-xl font-extrabold text-amber-600 mt-2">
+        {mostRepeatedObservation[1]} Times
+      </p>
+
+    </div>
+
+  </div>
+)}
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Lessons Learned
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Generated from repeated observation patterns
+  </p>
+
+  <div>
+
+    <p className="text-3xl font-extrabold text-indigo-600">
+      {lessonsLearnedCount}
+    </p>
+
+    <p className="text-sm text-slate-500 mt-2">
+      Recurrent engineering lessons identified
+    </p>
+
+  </div>
+
+</div>
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Engineering Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Automatically generated from observation analytics
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {engineeringSummary}
+    </pre>
+  </div>
+
+</div>
+
 
       {/* Main content split */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
