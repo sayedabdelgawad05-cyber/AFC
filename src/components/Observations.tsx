@@ -483,10 +483,54 @@ if (containsAny([
     createdItems.push(newItem);
   }
 
-  if (createdItems.length === 0) {
-    alert('No observations were detected. Parser needs adjustment for this file format.');
-    return;
-  }
+if (createdItems.length === 0) {
+  const fallbackStatus: 'Open' | 'Closed' =
+    importedText.toLowerCase().includes('closed') ? 'Closed' : 'Open';
+
+  const fallbackObservation = lines
+    .filter(line => {
+      const value = line.toLowerCase();
+
+      return (
+        value !== 'soa' &&
+        value !== 'contractor' &&
+        value !== 'comments' &&
+        value !== 'response' &&
+        value !== 'status' &&
+        value !== 'impact'
+      );
+    })
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  const fallbackItem: ObservationItem = {
+    id: Date.now(),
+    station: detectedStation,
+    level: detectedLevel,
+    discipline: 'SOAC',
+    observation: fallbackObservation || 'Observation extracted from Word file.',
+    reply: '',
+    status: fallbackStatus,
+    impact: 'Major',
+    date: new Date().toLocaleDateString(),
+
+    sheetNumber,
+    sheetTitle,
+    revision,
+    aconexReference,
+    sourceFileName,
+    importBatchId
+  };
+
+  const updated = [...observations, fallbackItem];
+
+  saveObservations(updated);
+
+  alert('Imported 1 observation using fallback parser.');
+
+  return;
+}
 
   const updated = [...observations, ...createdItems];
 
@@ -1281,6 +1325,23 @@ const repeatedReplies = Object.entries(repeatedReplyMap)
                     <p className="text-sm text-slate-500">
                       {item.level} | {item.discipline} | {item.impact}
                     </p>
+<div className="mt-2 text-xs text-slate-500 space-y-1">
+  <p>
+    <strong>Sheet No.:</strong> {item.sheetNumber || 'Not captured'}
+  </p>
+
+  <p>
+    <strong>Revision:</strong> {item.revision || 'Not captured'}
+  </p>
+
+  <p>
+    <strong>Aconex Ref.:</strong> {item.aconexReference || 'Not captured'}
+  </p>
+
+  <p>
+    <strong>Source File:</strong> {item.sourceFileName || 'Not captured'}
+  </p>
+</div>
                   </div>
 
                   <span
