@@ -482,8 +482,70 @@ if (containsAny([
 
     createdItems.push(newItem);
   }
-
 if (createdItems.length === 0) {
+  const dateLineRegex = /^\d{1,2}\/\d{1,2}\/\d{4}/;
+
+  const dateLineIndexes = lines
+    .map((line, index) => ({ line, index }))
+    .filter(item => dateLineRegex.test(item.line));
+
+  if (dateLineIndexes.length > 0) {
+    const fallbackItems: ObservationItem[] = [];
+
+    for (let i = 0; i < dateLineIndexes.length; i++) {
+      const startIndex = dateLineIndexes[i].index;
+      const endIndex =
+        i + 1 < dateLineIndexes.length
+          ? dateLineIndexes[i + 1].index
+          : lines.length;
+
+      const block = lines.slice(startIndex, endIndex);
+
+      const headerLine = block[0] || '';
+      const blockText = block
+        .slice(1)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!blockText) continue;
+
+      const fallbackStatus: 'Open' | 'Closed' =
+        importedText.toLowerCase().includes('closed') ? 'Closed' : 'Open';
+
+      const fallbackItem: ObservationItem = {
+        id: Date.now() + i,
+        station: detectedStation,
+        level: detectedLevel,
+        discipline: 'SOAC',
+        observation: `${headerLine} - ${blockText}`,
+        reply: '',
+        status: fallbackStatus,
+        impact: 'Major',
+        date: new Date().toLocaleDateString(),
+
+        sheetNumber,
+        sheetTitle,
+        revision,
+        aconexReference,
+        sourceFileName,
+        importBatchId
+      };
+
+      fallbackItems.push(fallbackItem);
+    }
+
+    if (fallbackItems.length > 0) {
+      const updated = [...observations, ...fallbackItems];
+
+      saveObservations(updated);
+
+      alert(`Imported ${fallbackItems.length} observations using date-based parser.`);
+
+      return;
+    }
+  }
+
   const fallbackStatus: 'Open' | 'Closed' =
     importedText.toLowerCase().includes('closed') ? 'Closed' : 'Open';
 
