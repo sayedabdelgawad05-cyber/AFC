@@ -140,6 +140,19 @@ const closureRate =
       )
     : 0;
 
+const drawingRiskIndex =
+  drawings.length > 0
+    ? Math.round(
+        ((underReviewDrawings + supersededDrawings) /
+          drawings.length) *
+          100
+      )
+    : 0;
+
+const documentCoverage =
+  documents.length +
+  drawings.length;
+
 
   const openRfis = rfis.filter(item => item.status === 'Open').length;
   const openNcrs = ncrs.filter(item => item.status === 'Open').length;
@@ -305,7 +318,28 @@ observations.forEach(item => {
   </h3>
 </div>
 
+<div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+  <p className="text-xs text-amber-600 font-bold uppercase">
+    Drawing Risk
+  </p>
+
+  <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+    {drawingRiskIndex}%
+  </h3>
+</div>
+
+<div className="bg-indigo-50 border border-indigo-100 rounded-2xl p-4">
+  <p className="text-xs text-indigo-600 font-bold uppercase">
+    Controlled Files
+  </p>
+
+  <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
+    {documentCoverage}
+  </h3>
+</div>
+
         </div>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
