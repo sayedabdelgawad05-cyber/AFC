@@ -459,6 +459,43 @@ ${
 }
 `;
 
+const latestRevisionOnly = drawings.filter(
+  item => latestRevisionIds.has(item.id)
+);
+
+const latestIfcDrawings = latestRevisionOnly.filter(
+  item => item.status === 'IFC'
+).length;
+
+const latestUnderReviewDrawings = latestRevisionOnly.filter(
+  item => item.status === 'Under Review'
+).length;
+
+const latestSupersededDrawings = latestRevisionOnly.filter(
+  item => item.status === 'Superseded'
+).length;
+
+const drawingExecutiveSummary = `
+Latest Revision Records: ${latestRevisionOnly.length}
+
+Latest IFC Drawings: ${latestIfcDrawings}
+
+Latest Under Review Drawings: ${latestUnderReviewDrawings}
+
+Latest Superseded Drawings: ${latestSupersededDrawings}
+
+Drawing Risk Index: ${drawingRiskIndex}/100
+
+Coordination Load: ${drawingCoordinationLoad}
+
+Most Revised Drawing Group:
+${
+  mostRevisedDrawingGroup
+    ? mostRevisedDrawingGroup[0]
+    : 'Not identified'
+}
+`;
+
 return (
 
     <div className="space-y-6">
@@ -840,6 +877,67 @@ return (
   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
     <pre className="whitespace-pre-wrap text-sm text-slate-700">
       {drawingEngineeringSummary}
+    </pre>
+  </div>
+
+</div>
+<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Latest Revisions
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {latestRevisionOnly.length}
+    </h3>
+  </div>
+
+  <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+    <p className="text-xs text-emerald-600 font-bold uppercase">
+      Latest IFC
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {latestIfcDrawings}
+    </h3>
+  </div>
+
+  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+    <p className="text-xs text-amber-600 font-bold uppercase">
+      Latest Review
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {latestUnderReviewDrawings}
+    </h3>
+  </div>
+
+  <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+    <p className="text-xs text-red-600 font-bold uppercase">
+      Latest Superseded
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {latestSupersededDrawings}
+    </h3>
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Drawing Executive Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Executive drawing overview based on latest revisions only
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {drawingExecutiveSummary}
     </pre>
   </div>
 
