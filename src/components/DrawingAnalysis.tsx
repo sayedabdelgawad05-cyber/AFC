@@ -335,7 +335,103 @@ Latest revision records: ${latestRevisionCount}
 Superseded drawings: ${supersededDrawings}
 `;
 
-  const drawingSummary = `
+const highRevisionGroups = Object.entries(drawingRevisionGroups)
+  .filter(([_, group]) => group.length >= 2)
+  .sort((a, b) => b[1].length - a[1].length);
+
+const mostRevisedDrawingGroup = highRevisionGroups[0];
+
+const supersededRatio =
+  totalDrawings > 0
+    ? Math.round((supersededDrawings / totalDrawings) * 100)
+    : 0;
+
+const drawingCoordinationLoad =
+  underReviewDrawings +
+  supersededDrawings +
+  drawingsWithMultipleRevisions;
+
+const drawingRiskIndex = Math.min(
+  100,
+  Math.round(
+    underReviewDrawings * 5 +
+    supersededDrawings * 3 +
+    drawingsWithMultipleRevisions * 4
+  )
+);
+
+const recommendedDrawingActions: string[] = [];
+
+if (underReviewDrawings > 0) {
+  recommendedDrawingActions.push(
+    'Review all drawings under review and prioritize closure of pending engineering comments.'
+  );
+}
+
+if (supersededDrawings > 0) {
+  recommendedDrawingActions.push(
+    'Verify that all superseded drawings are clearly marked and not used for site installation.'
+  );
+}
+
+if (drawingsWithMultipleRevisions > 0) {
+  recommendedDrawingActions.push(
+    'Track drawings with multiple revisions to identify unstable design areas and coordination risks.'
+  );
+}
+
+if (mostRevisedDrawingGroup) {
+  recommendedDrawingActions.push(
+    `Review drawing group ${mostRevisedDrawingGroup[0]} because it has ${mostRevisedDrawingGroup[1].length} registered revisions.`
+  );
+}
+
+if (topDrawingDiscipline) {
+  recommendedDrawingActions.push(
+    `Focus drawing coordination review on ${topDrawingDiscipline[0]} as the highest drawing discipline by count.`
+  );
+}
+
+if (recommendedDrawingActions.length === 0) {
+  recommendedDrawingActions.push(
+    'No critical drawing action is currently required based on available drawing data.'
+  );
+}
+
+const drawingEngineeringSummary = `
+Drawing Risk Index: ${drawingRiskIndex}/100
+
+Drawing Coordination Load: ${drawingCoordinationLoad}
+
+Superseded Drawing Ratio: ${supersededRatio}%
+
+Drawings with multiple revisions: ${drawingsWithMultipleRevisions}
+
+${
+  mostRevisedDrawingGroup
+    ? `Most revised drawing group: ${mostRevisedDrawingGroup[0]} with ${mostRevisedDrawingGroup[1].length} revisions.`
+    : 'No multi-revision drawing group detected.'
+}
+
+${
+  topDrawingStation
+    ? `Top drawing station: ${topDrawingStation[0]} with ${topDrawingStation[1]} drawings.`
+    : 'No top drawing station identified.'
+}
+
+${
+  topDrawingDiscipline
+    ? `Top drawing discipline: ${topDrawingDiscipline[0]} with ${topDrawingDiscipline[1]} drawings.`
+    : 'No top drawing discipline identified.'
+}
+
+Recommended drawing actions:
+${recommendedDrawingActions
+  .map((action, index) => `${index + 1}. ${action}`)
+  .join('\n')}
+`;
+
+const drawingSummary = `
 Total drawings registered: ${totalDrawings}
 
 IFC drawings: ${ifcDrawings}
@@ -363,7 +459,8 @@ ${
 }
 `;
 
-  return (
+return (
+
     <div className="space-y-6">
 
       <div className="bg-white border border-slate-200 rounded-3xl p-6">
@@ -608,6 +705,145 @@ ${
                 </p>
               </div>
             </div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Drawing Risk Index
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {drawingRiskIndex}/100
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Calculated from under review, superseded, and multi-revision drawings.
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Coordination Load
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {drawingCoordinationLoad}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Combined drawing review and revision load.
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Superseded Ratio
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
+      {supersededRatio}%
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Superseded drawings from total registered drawings.
+    </p>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Most Revised Drawing Group
+    </h3>
+
+    {mostRevisedDrawingGroup ? (
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xl font-extrabold text-slate-900">
+            {mostRevisedDrawingGroup[0]}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Drawing group with the highest number of revisions
+          </p>
+        </div>
+
+        <p className="text-3xl font-extrabold text-red-600">
+          {mostRevisedDrawingGroup[1].length}
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No multi-revision drawing group detected.
+      </p>
+    )}
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Drawing Coordination Focus
+    </h3>
+
+    {topDrawingDiscipline ? (
+      <div>
+        <p className="text-xl font-extrabold text-slate-900">
+          {topDrawingDiscipline[0]}
+        </p>
+
+        <p className="text-xs text-slate-500 mt-1">
+          Highest discipline by drawing count
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No drawing discipline data available.
+      </p>
+    )}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Recommended Drawing Actions
+  </h3>
+
+  <div className="space-y-3">
+    {recommendedDrawingActions.map((action, index) => (
+      <div
+        key={index}
+        className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+      >
+        <p className="text-sm text-slate-700">
+          <strong>{index + 1}.</strong> {action}
+        </p>
+      </div>
+    ))}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Drawing Engineering Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Automatically generated drawing engineering interpretation.
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {drawingEngineeringSummary}
+    </pre>
+  </div>
+
+</div>
 
             <div className="mt-3 flex flex-wrap gap-2">
               {sortedGroup.map(item => (
