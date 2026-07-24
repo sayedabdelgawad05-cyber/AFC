@@ -131,6 +131,66 @@ export default function ReportsCenter() {
     downloadCsv('document_register.csv', headers, rows);
   };
 
+const exportRFIs = () => {
+  const headers = [
+    'RFI Number',
+    'Title',
+    'Status',
+    'Discipline',
+    'Date'
+  ];
+
+  const rows = rfis.map(item => [
+    item.rfiNumber,
+    item.title,
+    item.status,
+    item.discipline,
+    item.dateRaised
+  ]);
+
+  downloadCsv('rfi_register.csv', headers, rows);
+};
+
+const exportNCRs = () => {
+  const headers = [
+    'NCR Number',
+    'Title',
+    'Status',
+    'Discipline',
+    'Date'
+  ];
+
+  const rows = ncrs.map(item => [
+    item.ncrNumber,
+    item.title,
+    item.status,
+    item.discipline,
+    item.dateRaised
+  ]);
+
+  downloadCsv('ncr_register.csv', headers, rows);
+};
+
+const exportPunches = () => {
+  const headers = [
+    'Punch Number',
+    'Title',
+    'Status',
+    'Discipline',
+    'Date'
+  ];
+
+  const rows = punches.map(item => [
+    item.punchNumber,
+    item.title,
+    item.status,
+    item.discipline,
+    item.dateRaised
+  ]);
+
+  downloadCsv('punch_register.csv', headers, rows);
+};
+
   const openObservations = observations.filter(item => item.status === 'Open').length;
   const closedObservations = observations.filter(item => item.status === 'Closed').length;
 const closureRate =
@@ -318,6 +378,36 @@ observations.forEach(item => {
   </h3>
 </div>
 
+<div className="bg-orange-50 border border-orange-100 rounded-2xl p-4">
+  <p className="text-xs text-orange-600 font-bold uppercase">
+    Open RFIs
+  </p>
+
+  <h3 className="text-3xl font-extrabold mt-2 text-orange-600">
+    {openRfis}
+  </h3>
+</div>
+
+<div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+  <p className="text-xs text-purple-600 font-bold uppercase">
+    Open NCRs
+  </p>
+
+  <h3 className="text-3xl font-extrabold mt-2 text-purple-600">
+    {openNcrs}
+  </h3>
+</div>
+
+<div className="bg-slate-100 border border-slate-200 rounded-2xl p-4">
+  <p className="text-xs text-slate-700 font-bold uppercase">
+    Open Punch
+  </p>
+
+  <h3 className="text-3xl font-extrabold mt-2 text-slate-700">
+    {openPunches}
+  </h3>
+</div>
+
 <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
   <p className="text-xs text-amber-600 font-bold uppercase">
     Drawing Risk
@@ -370,6 +460,26 @@ observations.forEach(item => {
           >
             Export Project Summary
           </button>
+<button
+  onClick={exportRFIs}
+  className="px-5 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl"
+>
+  Export RFI Register
+</button>
+
+<button
+  onClick={exportNCRs}
+  className="px-5 py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl"
+>
+  Export NCR Register
+</button>
+
+<button
+  onClick={exportPunches}
+  className="px-5 py-3 bg-slate-700 hover:bg-slate-800 text-white font-bold rounded-xl"
+>
+  Export Punch Register
+</button>
 
         </div>
       </div>
