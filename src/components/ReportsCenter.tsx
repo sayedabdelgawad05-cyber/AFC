@@ -442,7 +442,7 @@ observations.forEach(item => {
   </p>
 
   <h3 className="text-3xl font-extrabold mt-2 text-orange-600">
-    {openRfis}
+    {rfis.filter(item => item.status === 'Open').length}
   </h3>
 </div>
 
@@ -452,7 +452,7 @@ observations.forEach(item => {
   </p>
 
   <h3 className="text-3xl font-extrabold mt-2 text-purple-600">
-    {openNcrs}
+    {ncrs.filter(item => item.status === 'Open').length}
   </h3>
 </div>
 
@@ -462,7 +462,7 @@ observations.forEach(item => {
   </p>
 
   <h3 className="text-3xl font-extrabold mt-2 text-slate-700">
-    {openPunches}
+    {punches.filter(item => item.status === 'Open').length}
   </h3>
 </div>
 
