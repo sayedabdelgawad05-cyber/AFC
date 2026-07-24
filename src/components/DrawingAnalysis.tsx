@@ -39,6 +39,33 @@ export default function DrawingAnalysis() {
     localStorage.setItem('hsr_drawings', JSON.stringify(items));
   };
 
+const getDrawingBaseKey = (drawingNumberValue: string) => {
+  return drawingNumberValue
+    .replace(/\[[^\]]+\]/g, '')
+    .replace(/rev[\s\-_]*[a-z0-9]+/gi, '')
+    .replace(/\s+/g, '')
+    .toUpperCase();
+};
+
+const getRevisionRank = (revisionValue: string) => {
+  const cleanRevision = revisionValue
+    .replace('REV', '')
+    .replace('.', '')
+    .replace('-', '')
+    .trim()
+    .toUpperCase();
+
+  if (!cleanRevision || cleanRevision === 'NO REVISION') return 0;
+
+  if (/^[A-Z]$/.test(cleanRevision)) {
+    return cleanRevision.charCodeAt(0) - 64;
+  }
+
+  const numericValue = Number(cleanRevision);
+
+  return Number.isNaN(numericValue) ? 0 : numericValue;
+};
+
   const detectStationFromText = (text: string) => {
     const value = text.toLowerCase();
 
@@ -136,9 +163,58 @@ export default function DrawingAnalysis() {
       uploadDate: new Date().toLocaleDateString()
     };
 
-    const updated = [...drawings, newDrawing];
+const newDrawingBaseKey = getDrawingBaseKey(drawingNumber);
+const newRevisionRank = getRevisionRank(revision || 'No Revision');
 
-    saveDrawings(updated);
+const relatedDrawings = drawings.filter(
+  item => getDrawingBaseKey(item.drawingNumber) === newDrawingBaseKey
+);
+
+const sameRevisionExists = relatedDrawings.some(
+  item => getRevisionRank(item.revision) === newRevisionRank
+);
+
+if (sameRevisionExists) {
+  const confirmed = window.confirm(
+    'This drawing revision already exists. Do you want to continue?'
+  );
+
+  if (!confirmed) return;
+}
+
+const latestExistingRevision = relatedDrawings
+  .sort((a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision))[0];
+
+if (
+  latestExistingRevision &&
+  newRevisionRank < getRevisionRank(latestExistingRevision.revision)
+) {
+  const confirmed = window.confirm(
+    'You are adding an older revision than the latest registered revision. Do you want to continue?'
+  );
+
+  if (!confirmed) return;
+}
+
+const shouldSupersedePrevious =
+  relatedDrawings.length > 0 &&
+  newRevisionRank > getRevisionRank(latestExistingRevision?.revision || 'No Revision');
+
+const preparedDrawings = shouldSupersedePrevious
+  ? drawings.map(item =>
+      getDrawingBaseKey(item.drawingNumber) === newDrawingBaseKey
+        ? {
+            ...item,
+            status: 'Superseded' as const
+          }
+        : item
+    )
+  : drawings;
+
+const updated = [...preparedDrawings, newDrawing];
+
+saveDrawings(updated);
+
 
     setSelectedFile(null);
     setDrawingNumber('');
@@ -221,6 +297,40 @@ export default function DrawingAnalysis() {
 
   const topDrawingRevision = Object.entries(revisionMap)
     .sort((a, b) => b[1] - a[1])[0];
+
+const drawingRevisionGroups: Record<string, DrawingItem[]> = {};
+
+drawings.forEach((item) => {
+  const key = getDrawingBaseKey(item.drawingNumber);
+
+  if (!drawingRevisionGroups[key]) {
+    drawingRevisionGroups[key] = [];
+  }
+
+  drawingRevisionGroups[key].push(item);
+});
+
+const drawingsWithMultipleRevisions = Object.values(drawingRevisionGroups)
+  .filter(group => group.length > 1).length;
+
+const latestRevisionDrawings = Object.values(drawingRevisionGroups)
+  .map(group =>
+    [...group].sort(
+      (a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision)
+    )[0]
+  );
+
+const latestRevisionCount = latestRevisionDrawings.length;
+
+const revisionTrackingSummary = `
+Drawing groups detected: ${Object.keys(drawingRevisionGroups).length}
+
+Drawings with multiple revisions: ${drawingsWithMultipleRevisions}
+
+Latest revision records: ${latestRevisionCount}
+
+Superseded drawings: ${supersededDrawings}
+`;
 
   const drawingSummary = `
 Total drawings registered: ${totalDrawings}
@@ -382,6 +492,70 @@ ${
             {drawingSummary}
           </pre>
         </div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Drawing Groups
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {Object.keys(drawingRevisionGroups).length}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Unique drawing numbers tracked
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Multiple Revisions
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {drawingsWithMultipleRevisions}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Drawings having more than one revision
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Latest Records
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
+      {latestRevisionCount}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Latest revision records by drawing group
+    </p>
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Revision Tracking Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Foundation for comparing drawing revisions and identifying superseded records
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {revisionTrackingSummary}
+    </pre>
+  </div>
+
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
