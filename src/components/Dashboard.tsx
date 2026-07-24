@@ -296,6 +296,98 @@ ${
 }
 `;
 
+const repeatedIssueCount = mostRepeatedObservation
+  ? Number(mostRepeatedObservation[1])
+  : 0;
+
+const topRiskScore = highestRiskStation
+  ? highestRiskStation.riskScore
+  : 0;
+
+const coordinationLoadScore =
+  openObservations +
+  openRfisCount +
+  openNcrsCount +
+  openPunchesCount;
+
+const engineeringRiskIndex = Math.min(
+  100,
+  Math.round(
+    topRiskScore +
+    openNcrsCount * 5 +
+    openRfisCount * 2 +
+    openObservations +
+    openPunchesCount
+  )
+);
+
+const mostCriticalEngineeringDiscipline = topObservationDiscipline
+  ? topObservationDiscipline[0]
+  : 'Not identified';
+
+const highestRiskStationName = highestRiskStation
+  ? ((highestRiskStation as any).nameEn || (highestRiskStation as any).name || 'Unknown Station')
+  : 'Not identified';
+
+const recommendedEngineeringActions: string[] = [];
+
+if (openNcrsCount > 0) {
+  recommendedEngineeringActions.push(
+    'Prioritize closure of open NCRs (Non-Conformance Reports) before increasing installation progress.'
+  );
+}
+
+if (openRfisCount > 0) {
+  recommendedEngineeringActions.push(
+    'Review open RFIs (Requests for Information) with design and engineering teams to reduce clarification delays.'
+  );
+}
+
+if (openObservations > 0) {
+  recommendedEngineeringActions.push(
+    'Focus on closing open observations linked to repeated technical issues and problematic stations.'
+  );
+}
+
+if (mostRepeatedObservation) {
+  recommendedEngineeringActions.push(
+    `Address the repeated observation pattern: ${mostRepeatedObservation[0]}.`
+  );
+}
+
+if (topObservationDiscipline) {
+  recommendedEngineeringActions.push(
+    `Assign dedicated engineering review for ${topObservationDiscipline[0]} as the most affected observation discipline.`
+  );
+}
+
+if (recommendedEngineeringActions.length === 0) {
+  recommendedEngineeringActions.push(
+    'No critical engineering action is currently required based on available data.'
+  );
+}
+
+const engineeringAnalysisSummary = `
+Engineering Risk Index: ${engineeringRiskIndex}/100
+
+Coordination Load Score: ${coordinationLoadScore}
+
+Highest Risk Station: ${highestRiskStationName}
+
+Most Critical Engineering Discipline: ${mostCriticalEngineeringDiscipline}
+
+Repeated Issue Count: ${repeatedIssueCount}
+
+${
+  mostRepeatedObservation
+    ? `Most repeated technical issue: ${mostRepeatedObservation[0]}.`
+    : 'No repeated technical issue detected.'
+}
+
+Recommended engineering focus:
+${recommendedEngineeringActions.map((action, index) => `${index + 1}. ${action}`).join('\n')}
+`;
+
 return (
 
     <div id="dashboard_panel" className="space-y-6">
@@ -912,6 +1004,123 @@ return (
   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
     <pre className="whitespace-pre-wrap text-sm text-slate-700">
       {executiveDashboardSummary}
+    </pre>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Engineering Risk Index
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {engineeringRiskIndex}/100
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Calculated from NCRs, RFIs, observations, punch items, and station risk.
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Coordination Load Score
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {coordinationLoadScore}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Total open observations, RFIs, NCRs, and punch items.
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Repeated Issue Count
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
+      {repeatedIssueCount}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Frequency of the most repeated technical issue.
+    </p>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Most Critical Engineering Discipline
+    </h3>
+
+    <p className="text-2xl font-extrabold text-slate-900">
+      {mostCriticalEngineeringDiscipline}
+    </p>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Based on observation discipline concentration.
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Highest Risk Station
+    </h3>
+
+    <p className="text-2xl font-extrabold text-slate-900">
+      {highestRiskStationName}
+    </p>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Based on station NCRs, RFIs, punch items, and calculated risk score.
+    </p>
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Recommended Engineering Actions
+  </h3>
+
+  <div className="space-y-3">
+    {recommendedEngineeringActions.map((action, index) => (
+      <div
+        key={index}
+        className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+      >
+        <p className="text-sm text-slate-700">
+          <strong>{index + 1}.</strong> {action}
+        </p>
+      </div>
+    ))}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Engineering Analysis Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Automatically generated engineering interpretation from project data.
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {engineeringAnalysisSummary}
     </pre>
   </div>
 
