@@ -7,6 +7,8 @@ export default function ReportsCenter() {
   const [rfis, setRfis] = useState<any[]>([]);
   const [ncrs, setNcrs] = useState<any[]>([]);
   const [punches, setPunches] = useState<any[]>([]);
+   const [stationFilter, setStationFilter] = useState('All');
+   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     setObservations(JSON.parse(localStorage.getItem('hsr_observations') || '[]'));
@@ -242,6 +244,24 @@ observations.forEach(item => {
 const topStations = Object.entries(stationCounts)
   .sort((a, b) => b[1] - a[1])
   .slice(0, 10);
+
+const filteredObservations = observations.filter(item => {
+  const stationMatch =
+    stationFilter === 'All' ||
+    item.station === stationFilter;
+
+  const searchMatch =
+    searchTerm === '' ||
+    (item.observation || '')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()) ||
+    (item.station || '')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+  return stationMatch && searchMatch;
+});
+
 const levelCounts = {
   LG: 0,
   GR: 0,
@@ -284,6 +304,40 @@ observations.forEach(item => {
 
   return (
     <div className="space-y-6">
+
+<div className="bg-white border border-slate-200 rounded-3xl p-6">
+
+  <h3 className="text-lg font-bold mb-4">
+    Reports Filter
+  </h3>
+
+  <select
+    value={stationFilter}
+    onChange={(e) => setStationFilter(e.target.value)}
+    className="w-full border border-slate-300 rounded-xl px-3 py-2"
+  >
+    <option value="All">All Stations</option>
+
+    {Object.keys(stationCounts).map(station => (
+      <option key={station} value={station}>
+        {station}
+      </option>
+    ))}
+  </select>
+
+<input
+  type="text"
+  placeholder="Search observations..."
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  className="w-full border border-slate-300 rounded-xl px-3 py-2 mt-3"
+/>
+
+<p className="text-sm text-slate-500 mt-3">
+  Matching Observations: {filteredObservations.length}
+</p>
+
+</div>
 
 <div className="bg-white border border-slate-200 rounded-3xl p-6">
 
