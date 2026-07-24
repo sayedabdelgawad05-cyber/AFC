@@ -388,6 +388,91 @@ Recommended engineering focus:
 ${recommendedEngineeringActions.map((action, index) => `${index + 1}. ${action}`).join('\n')}
 `;
 
+const dashboardDrawings = JSON.parse(
+  localStorage.getItem('hsr_drawings') || '[]'
+);
+
+const totalDrawingRecords = dashboardDrawings.length;
+
+const ifcDrawingRecords = dashboardDrawings.filter(
+  (item: any) => item.status === 'IFC'
+).length;
+
+const underReviewDrawingRecords = dashboardDrawings.filter(
+  (item: any) => item.status === 'Under Review'
+).length;
+
+const supersededDrawingRecords = dashboardDrawings.filter(
+  (item: any) => item.status === 'Superseded'
+).length;
+
+const drawingStationCounts: Record<string, number> = {};
+
+dashboardDrawings.forEach((item: any) => {
+  const stationName = item.station || 'Unknown Station';
+
+  drawingStationCounts[stationName] =
+    (drawingStationCounts[stationName] || 0) + 1;
+});
+
+const dashboardTopDrawingStation = Object.entries(
+  drawingStationCounts
+).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const drawingDisciplineCounts: Record<string, number> = {};
+
+dashboardDrawings.forEach((item: any) => {
+  const disciplineName = item.discipline || 'Unknown';
+
+  drawingDisciplineCounts[disciplineName] =
+    (drawingDisciplineCounts[disciplineName] || 0) + 1;
+});
+
+const dashboardTopDrawingDiscipline = Object.entries(
+  drawingDisciplineCounts
+).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const drawingRevisionCounts: Record<string, number> = {};
+
+dashboardDrawings.forEach((item: any) => {
+  const revisionName = item.revision || 'No Revision';
+
+  drawingRevisionCounts[revisionName] =
+    (drawingRevisionCounts[revisionName] || 0) + 1;
+});
+
+const dashboardTopDrawingRevision = Object.entries(
+  drawingRevisionCounts
+).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const drawingDashboardSummary = `
+Total registered drawings: ${totalDrawingRecords}
+
+IFC drawings: ${ifcDrawingRecords}
+
+Under review drawings: ${underReviewDrawingRecords}
+
+Superseded drawings: ${supersededDrawingRecords}
+
+${
+  dashboardTopDrawingStation
+    ? `Top drawing station: ${dashboardTopDrawingStation[0]} with ${dashboardTopDrawingStation[1]} drawings.`
+    : 'No top drawing station identified.'
+}
+
+${
+  dashboardTopDrawingDiscipline
+    ? `Top drawing discipline: ${dashboardTopDrawingDiscipline[0]} with ${dashboardTopDrawingDiscipline[1]} drawings.`
+    : 'No top drawing discipline identified.'
+}
+
+${
+  dashboardTopDrawingRevision
+    ? `Most common drawing revision: ${dashboardTopDrawingRevision[0]} with ${dashboardTopDrawingRevision[1]} drawings.`
+    : 'No drawing revision data available.'
+}
+`;
+
 return (
 
     <div id="dashboard_panel" className="space-y-6">
@@ -1121,6 +1206,154 @@ return (
   <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
     <pre className="whitespace-pre-wrap text-sm text-slate-700">
       {engineeringAnalysisSummary}
+    </pre>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Total Drawings
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {totalDrawingRecords}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Registered drawing records
+    </p>
+  </div>
+
+  <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+    <p className="text-xs text-emerald-600 font-bold uppercase">
+      IFC Drawings
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {ifcDrawingRecords}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Issued for construction drawings
+    </p>
+  </div>
+
+  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+    <p className="text-xs text-amber-600 font-bold uppercase">
+      Under Review
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {underReviewDrawingRecords}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Drawings pending review
+    </p>
+  </div>
+
+  <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+    <p className="text-xs text-red-600 font-bold uppercase">
+      Superseded Drawings
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {supersededDrawingRecords}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Drawings replaced by newer revisions
+    </p>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Drawing Station
+    </h3>
+
+    {dashboardTopDrawingStation ? (
+      <>
+        <p className="text-xl font-extrabold text-slate-900">
+          {dashboardTopDrawingStation[0]}
+        </p>
+
+        <p className="text-sm text-slate-500 mt-1">
+          {dashboardTopDrawingStation[1]} drawings
+        </p>
+      </>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No drawing station data available.
+      </p>
+    )}
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Drawing Discipline
+    </h3>
+
+    {dashboardTopDrawingDiscipline ? (
+      <>
+        <p className="text-xl font-extrabold text-slate-900">
+          {dashboardTopDrawingDiscipline[0]}
+        </p>
+
+        <p className="text-sm text-slate-500 mt-1">
+          {dashboardTopDrawingDiscipline[1]} drawings
+        </p>
+      </>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No drawing discipline data available.
+      </p>
+    )}
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Drawing Revision
+    </h3>
+
+    {dashboardTopDrawingRevision ? (
+      <>
+        <p className="text-xl font-extrabold text-slate-900">
+          {dashboardTopDrawingRevision[0]}
+        </p>
+
+        <p className="text-sm text-slate-500 mt-1">
+          {dashboardTopDrawingRevision[1]} drawings
+        </p>
+      </>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No drawing revision data available.
+      </p>
+    )}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Drawing Dashboard Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Drawing register analytics integrated into the main project dashboard
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {drawingDashboardSummary}
     </pre>
   </div>
 
