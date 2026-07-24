@@ -298,22 +298,22 @@ saveDrawings(updated);
   const topDrawingRevision = Object.entries(revisionMap)
     .sort((a, b) => b[1] - a[1])[0];
 
-const drawingRevisionGroups: Record<string, DrawingItem[]> = {};
+const safeDrawingRevisionGroups: Record<string, DrawingItem[]> = {};
 
 drawings.forEach((item) => {
   const key = getDrawingBaseKey(item.drawingNumber);
 
-  if (!drawingRevisionGroups[key]) {
-    drawingRevisionGroups[key] = [];
+  if (!safeDrawingRevisionGroups[key]) {
+    safeDrawingRevisionGroups[key] = [];
   }
 
-  drawingRevisionGroups[key].push(item);
+  safeDrawingRevisionGroups[key].push(item);
 });
 
-const drawingsWithMultipleRevisions = Object.values(drawingRevisionGroups)
+const drawingsWithMultipleRevisions = Object.values(safeDrawingRevisionGroups)
   .filter(group => group.length > 1).length;
 
-const latestRevisionDrawings = Object.values(drawingRevisionGroups)
+const latestRevisionDrawings = Object.values(safeDrawingRevisionGroups)
   .map(group =>
     [...group].sort(
       (a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision)
@@ -326,7 +326,7 @@ const latestRevisionIds = new Set(
 );
 
 const revisionTrackingSummary = `
-Drawing groups detected: ${Object.keys(drawingRevisionGroups).length}
+Drawing groups detected: ${Object.keys(safeDrawingRevisionGroups).length}
 
 Drawings with multiple revisions: ${drawingsWithMultipleRevisions}
 
@@ -335,7 +335,7 @@ Latest revision records: ${latestRevisionCount}
 Superseded drawings: ${supersededDrawings}
 `;
 
-const highRevisionGroups = Object.entries(drawingRevisionGroups)
+const highRevisionGroups = Object.entries(safeDrawingRevisionGroups)
   .filter(([_, group]) => group.length >= 2)
   .sort((a, b) => b[1].length - a[1].length);
 
@@ -498,7 +498,7 @@ ${
 
 const stationRevisionCounts: Record<string, number> = {};
 
-Object.values(drawingRevisionGroups).forEach((group) => {
+Object.values(safeDrawingRevisionGroups).forEach((group) => {
   const stationName = group[0]?.station || 'Unknown Station';
 
   stationRevisionCounts[stationName] =
@@ -668,382 +668,382 @@ return (
           </pre>
         </div>
 
-<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
 
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Drawing Groups
-    </p>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Drawing Groups
+            </p>
 
-    <h3 className="text-3xl font-extrabold mt-2">
-      {Object.keys(drawingRevisionGroups).length}
-    </h3>
+            <h3 className="text-3xl font-extrabold mt-2">
+              {Object.keys(safeDrawingRevisionGroups).length}
+            </h3>
 
-    <p className="text-xs text-slate-500 mt-2">
-      Unique drawing numbers tracked
-    </p>
-  </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Unique drawing numbers tracked
+            </p>
+          </div>
 
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Multiple Revisions
-    </p>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Multiple Revisions
+            </p>
 
-    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
-      {drawingsWithMultipleRevisions}
-    </h3>
+            <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+              {drawingsWithMultipleRevisions}
+            </h3>
 
-    <p className="text-xs text-slate-500 mt-2">
-      Drawings having more than one revision
-    </p>
-  </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Drawings having more than one revision
+            </p>
+          </div>
 
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Latest Records
-    </p>
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Latest Records
+            </p>
 
-    <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
-      {latestRevisionCount}
-    </h3>
+            <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
+              {latestRevisionCount}
+            </h3>
 
-    <p className="text-xs text-slate-500 mt-2">
-      Latest revision records by drawing group
-    </p>
-  </div>
+            <p className="text-xs text-slate-500 mt-2">
+              Latest revision records by drawing group
+            </p>
+          </div>
 
-</div>
+        </div>
 
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
 
-  <h3 className="text-lg font-bold text-slate-900">
-    Revision Tracking Summary
-  </h3>
+          <h3 className="text-lg font-bold text-slate-900">
+            Revision Tracking Summary
+          </h3>
 
-  <p className="text-xs text-slate-500 mt-1 mb-4">
-    Foundation for comparing drawing revisions and identifying superseded records
-  </p>
+          <p className="text-xs text-slate-500 mt-1 mb-4">
+            Foundation for comparing drawing revisions and identifying superseded records
+          </p>
 
-  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-    <pre className="whitespace-pre-wrap text-sm text-slate-700">
-      {revisionTrackingSummary}
-    </pre>
-  </div>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <pre className="whitespace-pre-wrap text-sm text-slate-700">
+              {revisionTrackingSummary}
+            </pre>
+          </div>
 
-</div>
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+        </div>
 
-  <h3 className="text-lg font-bold text-slate-900 mb-3">
-    Revision History Groups
-  </h3>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
 
-  <p className="text-xs text-slate-500 mt-1 mb-4">
-    Grouped drawings by drawing number with their registered revisions.
-  </p>
+          <h3 className="text-lg font-bold text-slate-900 mb-3">
+            Revision History Groups
+          </h3>
 
-  {Object.entries(drawingRevisionGroups).length === 0 ? (
-    <p className="text-sm text-slate-500">
-      No revision groups available.
-    </p>
-  ) : (
-    <div className="space-y-3">
-      {Object.entries(drawingRevisionGroups).map(([drawingKey, group]) => {
-        const sortedGroup = [...group].sort(
-          (a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision)
-        );
+          <p className="text-xs text-slate-500 mt-1 mb-4">
+            Grouped drawings by drawing number with their registered revisions.
+          </p>
 
-        const latestItem = sortedGroup[0];
+          {Object.entries(safeDrawingRevisionGroups).length === 0 ? (
+            <p className="text-sm text-slate-500">
+              No revision groups available.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {Object.entries(safeDrawingRevisionGroups).map(([drawingKey, group]) => {
+                const sortedGroup = [...group].sort(
+                  (a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision)
+                );
 
-        return (
-          <div
-            key={drawingKey}
-            className="border border-slate-200 rounded-xl p-3 bg-slate-50"
-          >
-            <div className="flex items-center justify-between gap-4">
+                const latestItem = sortedGroup[0];
+
+                return (
+                  <div
+                    key={drawingKey}
+                    className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <div>
+                        <p className="text-sm font-bold text-slate-900">
+                          {drawingKey}
+                        </p>
+
+                        <p className="text-xs text-slate-500 mt-1">
+                          Total revisions: {group.length}
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-xs text-slate-500">
+                          Latest Revision
+                        </p>
+
+                        <p className="text-xl font-extrabold text-cyan-600">
+                          {latestItem.revision}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {sortedGroup.map(item => (
+                        <span
+                          key={item.id}
+                          className={`text-xs font-bold px-3 py-1 rounded-full ${
+                            latestRevisionIds.has(item.id)
+                              ? 'bg-cyan-100 text-cyan-700'
+                              : 'bg-slate-200 text-slate-700'
+                          }`}
+                        >
+                          Rev {item.revision} - {item.status}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Drawing Risk Index
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+              {drawingRiskIndex}/100
+            </h3>
+
+            <p className="text-xs text-slate-500 mt-2">
+              Calculated from under review, superseded, and multi-revision drawings.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Coordination Load
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+              {drawingCoordinationLoad}
+            </h3>
+
+            <p className="text-xs text-slate-500 mt-2">
+              Combined drawing review and revision load.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Superseded Ratio
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
+              {supersededRatio}%
+            </h3>
+
+            <p className="text-xs text-slate-500 mt-2">
+              Superseded drawings from total registered drawings.
+            </p>
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <h3 className="text-lg font-bold text-slate-900 mb-3">
+              Most Revised Drawing Group
+            </h3>
+
+            {mostRevisedDrawingGroup ? (
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-extrabold text-slate-900">
+                    {mostRevisedDrawingGroup[0]}
+                  </p>
+
+                  <p className="text-xs text-slate-500 mt-1">
+                    Drawing group with the highest number of revisions
+                  </p>
+                </div>
+
+                <p className="text-3xl font-extrabold text-red-600">
+                  {mostRevisedDrawingGroup[1].length}
+                </p>
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                No multi-revision drawing group detected.
+              </p>
+            )}
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <h3 className="text-lg font-bold text-slate-900 mb-3">
+              Drawing Coordination Focus
+            </h3>
+
+            {topDrawingDiscipline ? (
               <div>
-                <p className="text-sm font-bold text-slate-900">
-                  {drawingKey}
+                <p className="text-xl font-extrabold text-slate-900">
+                  {topDrawingDiscipline[0]}
                 </p>
 
                 <p className="text-xs text-slate-500 mt-1">
-                  Total revisions: {group.length}
+                  Highest discipline by drawing count
                 </p>
               </div>
+            ) : (
+              <p className="text-sm text-slate-500">
+                No drawing discipline data available.
+              </p>
+            )}
+          </div>
 
-              <div className="text-right">
-                <p className="text-xs text-slate-500">
-                  Latest Revision
-                </p>
-
-                <p className="text-xl font-extrabold text-cyan-600">
-                  {latestItem.revision}
-                </p>
-              </div>
-            </div>
-
-<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Drawing Risk Index
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
-      {drawingRiskIndex}/100
-    </h3>
-
-    <p className="text-xs text-slate-500 mt-2">
-      Calculated from under review, superseded, and multi-revision drawings.
-    </p>
-  </div>
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Coordination Load
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
-      {drawingCoordinationLoad}
-    </h3>
-
-    <p className="text-xs text-slate-500 mt-2">
-      Combined drawing review and revision load.
-    </p>
-  </div>
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Superseded Ratio
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
-      {supersededRatio}%
-    </h3>
-
-    <p className="text-xs text-slate-500 mt-2">
-      Superseded drawings from total registered drawings.
-    </p>
-  </div>
-
-</div>
-
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <h3 className="text-lg font-bold text-slate-900 mb-3">
-      Most Revised Drawing Group
-    </h3>
-
-    {mostRevisedDrawingGroup ? (
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-xl font-extrabold text-slate-900">
-            {mostRevisedDrawingGroup[0]}
-          </p>
-
-          <p className="text-xs text-slate-500 mt-1">
-            Drawing group with the highest number of revisions
-          </p>
         </div>
 
-        <p className="text-3xl font-extrabold text-red-600">
-          {mostRevisedDrawingGroup[1].length}
-        </p>
-      </div>
-    ) : (
-      <p className="text-sm text-slate-500">
-        No multi-revision drawing group detected.
-      </p>
-    )}
-  </div>
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
 
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <h3 className="text-lg font-bold text-slate-900 mb-3">
-      Drawing Coordination Focus
-    </h3>
+          <h3 className="text-lg font-bold text-slate-900 mb-3">
+            Recommended Drawing Actions
+          </h3>
 
-    {topDrawingDiscipline ? (
-      <div>
-        <p className="text-xl font-extrabold text-slate-900">
-          {topDrawingDiscipline[0]}
-        </p>
-
-        <p className="text-xs text-slate-500 mt-1">
-          Highest discipline by drawing count
-        </p>
-      </div>
-    ) : (
-      <p className="text-sm text-slate-500">
-        No drawing discipline data available.
-      </p>
-    )}
-  </div>
-
-</div>
-
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
-
-  <h3 className="text-lg font-bold text-slate-900 mb-3">
-    Recommended Drawing Actions
-  </h3>
-
-  <div className="space-y-3">
-    {recommendedDrawingActions.map((action, index) => (
-      <div
-        key={index}
-        className="border border-slate-200 rounded-xl p-3 bg-slate-50"
-      >
-        <p className="text-sm text-slate-700">
-          <strong>{index + 1}.</strong> {action}
-        </p>
-      </div>
-    ))}
-  </div>
-
-</div>
-
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
-
-  <h3 className="text-lg font-bold text-slate-900">
-    Drawing Engineering Summary
-  </h3>
-
-  <p className="text-xs text-slate-500 mt-1 mb-4">
-    Automatically generated drawing engineering interpretation.
-  </p>
-
-  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-    <pre className="whitespace-pre-wrap text-sm text-slate-700">
-      {drawingEngineeringSummary}
-    </pre>
-  </div>
-
-</div>
-
-<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Latest Revisions
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2">
-      {latestRevisionOnly.length}
-    </h3>
-  </div>
-
-  <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
-    <p className="text-xs text-emerald-600 font-bold uppercase">
-      Latest IFC
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
-      {latestIfcDrawings}
-    </h3>
-  </div>
-
-  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
-    <p className="text-xs text-amber-600 font-bold uppercase">
-      Latest Review
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
-      {latestUnderReviewDrawings}
-    </h3>
-  </div>
-
-  <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-    <p className="text-xs text-red-600 font-bold uppercase">
-      Latest Superseded
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
-      {latestSupersededDrawings}
-    </h3>
-  </div>
-
-</div>
-
-<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
-
-  <h3 className="text-lg font-bold text-slate-900">
-    Drawing Executive Summary
-  </h3>
-
-  <p className="text-xs text-slate-500 mt-1 mb-4">
-    Executive drawing overview based on latest revisions only
-  </p>
-
-  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-    <pre className="whitespace-pre-wrap text-sm text-slate-700">
-      {drawingExecutiveSummary}
-    </pre>
-  </div>
-
-</div>
-<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Drawing Health Score
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
-      {drawingHealthScore}%
-    </h3>
-  </div>
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Revision Stability
-    </p>
-
-    <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
-      {revisionStabilityIndex}%
-    </h3>
-  </div>
-
-  <div className="bg-white border border-slate-200 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 font-bold uppercase">
-      Most Revised Station
-    </p>
-
-    <h3 className="text-xl font-extrabold mt-2 text-red-600">
-      {mostRevisedStation
-        ? mostRevisedStation[0]
-        : 'N/A'}
-    </h3>
-
-    <p className="text-xs text-slate-500 mt-1">
-      {mostRevisedStation
-        ? `${mostRevisedStation[1]} revisions`
-        : 'No revision data'}
-    </p>
-  </div>
-
-</div>
-
-            <div className="mt-3 flex flex-wrap gap-2">
-              {sortedGroup.map(item => (
-                <span
-                  key={item.id}
-                  className={`text-xs font-bold px-3 py-1 rounded-full ${
-                    latestRevisionIds.has(item.id)
-                      ? 'bg-cyan-100 text-cyan-700'
-                      : 'bg-slate-200 text-slate-700'
-                  }`}
-                >
-                  Rev {item.revision} - {item.status}
-                </span>
-              ))}
-            </div>
+          <div className="space-y-3">
+            {recommendedDrawingActions.map((action, index) => (
+              <div
+                key={index}
+                className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+              >
+                <p className="text-sm text-slate-700">
+                  <strong>{index + 1}.</strong> {action}
+                </p>
+              </div>
+            ))}
           </div>
-        );
-      })}
-    </div>
-  )}
 
-</div>
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+          <h3 className="text-lg font-bold text-slate-900">
+            Drawing Engineering Summary
+          </h3>
+
+          <p className="text-xs text-slate-500 mt-1 mb-4">
+            Automatically generated drawing engineering interpretation.
+          </p>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <pre className="whitespace-pre-wrap text-sm text-slate-700">
+              {drawingEngineeringSummary}
+            </pre>
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Latest Revisions
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2">
+              {latestRevisionOnly.length}
+            </h3>
+          </div>
+
+          <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+            <p className="text-xs text-emerald-600 font-bold uppercase">
+              Latest IFC
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+              {latestIfcDrawings}
+            </h3>
+          </div>
+
+          <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+            <p className="text-xs text-amber-600 font-bold uppercase">
+              Latest Review
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+              {latestUnderReviewDrawings}
+            </h3>
+          </div>
+
+          <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+            <p className="text-xs text-red-600 font-bold uppercase">
+              Latest Superseded
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+              {latestSupersededDrawings}
+            </h3>
+          </div>
+
+        </div>
+
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+          <h3 className="text-lg font-bold text-slate-900">
+            Drawing Executive Summary
+          </h3>
+
+          <p className="text-xs text-slate-500 mt-1 mb-4">
+            Executive drawing overview based on latest revisions only
+          </p>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <pre className="whitespace-pre-wrap text-sm text-slate-700">
+              {drawingExecutiveSummary}
+            </pre>
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Drawing Health Score
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+              {drawingHealthScore}%
+            </h3>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Revision Stability
+            </p>
+
+            <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
+              {revisionStabilityIndex}%
+            </h3>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-2xl p-4">
+            <p className="text-xs text-slate-500 font-bold uppercase">
+              Most Revised Station
+            </p>
+
+            <h3 className="text-xl font-extrabold mt-2 text-red-600">
+              {mostRevisedStation ? mostRevisedStation[0] : 'N/A'}
+            </h3>
+
+            <p className="text-xs text-slate-500 mt-1">
+              {mostRevisedStation
+                ? `${mostRevisedStation[1]} revisions`
+                : 'No revision data'}
+            </p>
+          </div>
+
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 

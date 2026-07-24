@@ -13,6 +13,7 @@ import AIAssistant from './components/AIAssistant';
 import DocumentControl from './components/DocumentControl';
 import Observations from './components/Observations';
 import DrawingAnalysis from './components/DrawingAnalysis';
+import ReportsCenter from './components/ReportsCenter';
 
 // Icons
 import { 
@@ -36,12 +37,14 @@ import {
 type NavTab =
   | 'dashboard'
   | 'station'
+  | 'locations'
   | 'creator'
   | 'archive'
   | 'assistant'
   | 'documents'
   | 'observations'
-   | 'drawings'
+  | 'drawings'
+  | 'reports'
   | 'admin';
 
 export default function App() {
@@ -259,7 +262,8 @@ const sidebarItems = [
   { id: 'observations', label: 'Observations', icon: FileText },
   { id: 'documents', label: 'Document Control', icon: FileText },
   { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
-   { id: 'drawings', label: 'Drawing Analysis', icon: FileText },
+  { id: 'drawings', label: 'Drawing Analysis', icon: FileText },
+    { id: 'reports', label: 'Reports Center', icon: FileText },
 ];
 
 
@@ -592,6 +596,10 @@ const sidebarItems = [
 
 {activeTab === 'drawings' && (
   <DrawingAnalysis />
+)}
+
+{activeTab === 'reports' && (
+  <ReportsCenter />
 )}
 
 {activeTab === 'documents' && (
