@@ -12,6 +12,7 @@ import AdminPanel from './components/AdminPanel';
 import AIAssistant from './components/AIAssistant';
 import DocumentControl from './components/DocumentControl';
 import Observations from './components/Observations';
+import DrawingAnalysis from './components/DrawingAnalysis';
 
 // Icons
 import { 
@@ -40,6 +41,7 @@ type NavTab =
   | 'assistant'
   | 'documents'
   | 'observations'
+   | 'drawings'
   | 'admin';
 
 export default function App() {
@@ -257,6 +259,7 @@ const sidebarItems = [
   { id: 'observations', label: 'Observations', icon: FileText },
   { id: 'documents', label: 'Document Control', icon: FileText },
   { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
+   { id: 'drawings', label: 'Drawing Analysis', icon: FileText },
 ];
 
 
@@ -585,6 +588,10 @@ const sidebarItems = [
 
 {activeTab === 'observations' && (
   <Observations />
+)}
+
+{activeTab === 'drawings' && (
+  <DrawingAnalysis />
 )}
 
 {activeTab === 'documents' && (
