@@ -496,6 +496,44 @@ ${
 }
 `;
 
+const stationRevisionCounts: Record<string, number> = {};
+
+Object.values(drawingRevisionGroups).forEach((group) => {
+  const stationName = group[0]?.station || 'Unknown Station';
+
+  stationRevisionCounts[stationName] =
+    (stationRevisionCounts[stationName] || 0) +
+    Math.max(group.length - 1, 0);
+});
+
+const mostRevisedStation = Object.entries(
+  stationRevisionCounts
+).sort((a, b) => b[1] - a[1])[0];
+
+const drawingHealthScore = Math.max(
+  0,
+  Math.min(
+    100,
+    100 -
+      underReviewDrawings * 3 -
+      supersededDrawings * 2 -
+      drawingsWithMultipleRevisions * 2
+  )
+);
+
+const revisionStabilityIndex =
+  totalDrawings > 0
+    ? Math.max(
+        0,
+        100 -
+          Math.round(
+            ((drawingsWithMultipleRevisions + supersededDrawings) /
+              totalDrawings) *
+              100
+          )
+      )
+    : 100;
+
 return (
 
     <div className="space-y-6">
@@ -881,6 +919,7 @@ return (
   </div>
 
 </div>
+
 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
 
   <div className="bg-white border border-slate-200 rounded-2xl p-4">
@@ -939,6 +978,47 @@ return (
     <pre className="whitespace-pre-wrap text-sm text-slate-700">
       {drawingExecutiveSummary}
     </pre>
+  </div>
+
+</div>
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Drawing Health Score
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {drawingHealthScore}%
+    </h3>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Revision Stability
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
+      {revisionStabilityIndex}%
+    </h3>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Most Revised Station
+    </p>
+
+    <h3 className="text-xl font-extrabold mt-2 text-red-600">
+      {mostRevisedStation
+        ? mostRevisedStation[0]
+        : 'N/A'}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1">
+      {mostRevisedStation
+        ? `${mostRevisedStation[1]} revisions`
+        : 'No revision data'}
+    </p>
   </div>
 
 </div>
