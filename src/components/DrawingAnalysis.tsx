@@ -321,6 +321,9 @@ const latestRevisionDrawings = Object.values(drawingRevisionGroups)
   );
 
 const latestRevisionCount = latestRevisionDrawings.length;
+const latestRevisionIds = new Set(
+  latestRevisionDrawings.map(item => item.id)
+);
 
 const revisionTrackingSummary = `
 Drawing groups detected: ${Object.keys(drawingRevisionGroups).length}
@@ -556,6 +559,77 @@ ${
   </div>
 
 </div>
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Revision History Groups
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Grouped drawings by drawing number with their registered revisions.
+  </p>
+
+  {Object.entries(drawingRevisionGroups).length === 0 ? (
+    <p className="text-sm text-slate-500">
+      No revision groups available.
+    </p>
+  ) : (
+    <div className="space-y-3">
+      {Object.entries(drawingRevisionGroups).map(([drawingKey, group]) => {
+        const sortedGroup = [...group].sort(
+          (a, b) => getRevisionRank(b.revision) - getRevisionRank(a.revision)
+        );
+
+        const latestItem = sortedGroup[0];
+
+        return (
+          <div
+            key={drawingKey}
+            className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+          >
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-sm font-bold text-slate-900">
+                  {drawingKey}
+                </p>
+
+                <p className="text-xs text-slate-500 mt-1">
+                  Total revisions: {group.length}
+                </p>
+              </div>
+
+              <div className="text-right">
+                <p className="text-xs text-slate-500">
+                  Latest Revision
+                </p>
+
+                <p className="text-xl font-extrabold text-cyan-600">
+                  {latestItem.revision}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {sortedGroup.map(item => (
+                <span
+                  key={item.id}
+                  className={`text-xs font-bold px-3 py-1 rounded-full ${
+                    latestRevisionIds.has(item.id)
+                      ? 'bg-cyan-100 text-cyan-700'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  Rev {item.revision} - {item.status}
+                </span>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  )}
+
+</div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -750,9 +824,16 @@ ${
                   </div>
 
                   <div className="text-right">
-                    <span className="text-xs font-bold px-3 py-1 rounded-full bg-cyan-100 text-cyan-700">
-                      {item.status}
-                    </span>
+                    {latestRevisionIds.has(item.id) && (
+  <span className="text-xs font-bold px-3 py-1 rounded-full bg-emerald-100 text-emerald-700">
+    Latest Revision
+  </span>
+)}
+
+<span className="ml-2 text-xs font-bold px-3 py-1 rounded-full bg-cyan-100 text-cyan-700">
+  {item.status}
+</span>
+
 
                     <button
                       onClick={() => handleDeleteDrawing(item.id)}
