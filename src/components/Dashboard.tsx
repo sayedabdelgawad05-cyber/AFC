@@ -208,6 +208,94 @@ const totalClosedActionItems =
   closedNcrsCount +
   closedPunchesCount;
 
+const observationDisciplineCounts: Record<string, number> = {};
+
+observations.forEach((item: any) => {
+  const discipline = item.discipline || 'Unknown';
+
+  observationDisciplineCounts[discipline] =
+    (observationDisciplineCounts[discipline] || 0) + 1;
+});
+
+const topObservationDiscipline = Object.entries(
+  observationDisciplineCounts
+).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const documentDisciplineCounts: Record<string, number> = {};
+
+documents.forEach((doc: any) => {
+  const discipline = doc.discipline || doc.type || 'Unknown';
+
+  documentDisciplineCounts[discipline] =
+    (documentDisciplineCounts[discipline] || 0) + 1;
+});
+
+const topDocumentDiscipline = Object.entries(
+  documentDisciplineCounts
+).sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const revisionCounts: Record<string, number> = {};
+
+documents.forEach((doc: any) => {
+  const revisionName = doc.revision || 'No Revision';
+
+  revisionCounts[revisionName] =
+    (revisionCounts[revisionName] || 0) + 1;
+});
+
+const topRevision = Object.entries(revisionCounts)
+  .sort((a, b) => Number(b[1]) - Number(a[1]))[0];
+
+const afcDocumentPercentage =
+  totalDocuments > 0
+    ? Math.round((afcDocuments / totalDocuments) * 100)
+    : 0;
+
+const projectClosureRate =
+  totalOpenActionItems + totalClosedActionItems > 0
+    ? Math.round(
+        (totalClosedActionItems /
+          (totalOpenActionItems + totalClosedActionItems)) *
+          100
+      )
+    : 0;
+
+const executiveDashboardSummary = `
+Project Data Records: ${totalDataRecords}
+
+Open Action Items: ${totalOpenActionItems}
+
+Closed Action Items: ${totalClosedActionItems}
+
+Project Closure Rate: ${projectClosureRate}%
+
+Engineering Health Score: ${engineeringHealthScore}%
+
+${
+  topObservationStation
+    ? `Top observation station: ${topObservationStation[0]} with ${topObservationStation[1]} open observations.`
+    : 'No top observation station identified.'
+}
+
+${
+  topObservationDiscipline
+    ? `Top observation discipline: ${topObservationDiscipline[0]} with ${topObservationDiscipline[1]} observations.`
+    : 'No top observation discipline identified.'
+}
+
+${
+  mostRepeatedObservation
+    ? `Most repeated observation pattern: ${mostRepeatedObservation[0]}.`
+    : 'No repeated observation pattern detected.'
+}
+
+${
+  topDocumentDiscipline
+    ? `Top document discipline: ${topDocumentDiscipline[0]} with ${topDocumentDiscipline[1]} documents.`
+    : 'No top document discipline identified.'
+}
+`;
+
 return (
 
     <div id="dashboard_panel" className="space-y-6">
@@ -647,6 +735,184 @@ return (
       </div>
     ))}
 
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Project Closure Rate
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {projectClosureRate}%
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Closed action items vs total action items
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      AFC Documents Ratio
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-cyan-600">
+      {afcDocumentPercentage}%
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      AFC documents from total document register
+    </p>
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Lessons Learned
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-indigo-600">
+      {lessonsLearnedCount}
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-2">
+      Repeated engineering patterns identified
+    </p>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Observation Discipline
+    </h3>
+
+    {topObservationDiscipline ? (
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xl font-extrabold text-slate-900">
+            {topObservationDiscipline[0]}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Discipline with the highest number of observations
+          </p>
+        </div>
+
+        <p className="text-3xl font-extrabold text-red-600">
+          {topObservationDiscipline[1]}
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No observation discipline data available.
+      </p>
+    )}
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Document Discipline
+    </h3>
+
+    {topDocumentDiscipline ? (
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xl font-extrabold text-slate-900">
+            {topDocumentDiscipline[0]}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Discipline with the highest document count
+          </p>
+        </div>
+
+        <p className="text-3xl font-extrabold text-cyan-600">
+          {topDocumentDiscipline[1]}
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No document discipline data available.
+      </p>
+    )}
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Top Document Revision
+    </h3>
+
+    {topRevision ? (
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-xl font-extrabold text-slate-900">
+            {topRevision[0]}
+          </p>
+
+          <p className="text-xs text-slate-500 mt-1">
+            Most common document revision in the register
+          </p>
+        </div>
+
+        <p className="text-3xl font-extrabold text-amber-600">
+          {topRevision[1]}
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No revision data available.
+      </p>
+    )}
+  </div>
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <h3 className="text-lg font-bold text-slate-900 mb-3">
+      Most Repeated Observation Pattern
+    </h3>
+
+    {mostRepeatedObservation ? (
+      <div>
+        <p className="text-sm font-semibold text-slate-900">
+          {mostRepeatedObservation[0]}
+        </p>
+
+        <p className="text-2xl font-extrabold text-red-600 mt-2">
+          {mostRepeatedObservation[1]} Times
+        </p>
+      </div>
+    ) : (
+      <p className="text-sm text-slate-500">
+        No repeated observation pattern detected.
+      </p>
+    )}
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Executive Data Analysis Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Consolidated project data analysis from documents, observations, RFIs, NCRs, punch list, and stations
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+    <pre className="whitespace-pre-wrap text-sm text-slate-700">
+      {executiveDashboardSummary}
+    </pre>
   </div>
 
 </div>
