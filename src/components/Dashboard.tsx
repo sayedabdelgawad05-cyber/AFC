@@ -83,6 +83,7 @@ const stationRiskScores = stations.map(st => {
 const topRiskStations = [...stationRiskScores]
   .sort((a, b) => b.riskScore - a.riskScore)
   .slice(0, 5);
+const highestRiskStation = topRiskStations[0];
 const mostNcrStation = [...stations].sort(
   (a, b) => b.openNCRs - a.openNCRs
 )[0];
@@ -175,6 +176,37 @@ ${
 
 ${lessonsLearnedCount} lessons learned have been identified.
 `;
+
+const closedRfisCount = rfis.filter(
+  r => r.status === 'Closed'
+).length;
+
+const closedNcrsCount = ncrs.filter(
+  n => n.status === 'Closed'
+).length;
+
+const closedPunchesCount = punches.filter(
+  p => p.status === 'Closed'
+).length;
+
+const totalDataRecords =
+  totalDocuments +
+  observations.length +
+  rfis.length +
+  ncrs.length +
+  punches.length;
+
+const totalOpenActionItems =
+  openObservations +
+  openRfisCount +
+  openNcrsCount +
+  openPunchesCount;
+
+const totalClosedActionItems =
+  closedObservations +
+  closedRfisCount +
+  closedNcrsCount +
+  closedPunchesCount;
 
 return (
 
@@ -576,6 +608,49 @@ return (
 
 </div>
 
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900 mb-3">
+    Top 5 Risk Stations
+  </h3>
+
+  <div className="space-y-3">
+
+    {topRiskStations.map((station) => (
+      <div
+        key={station.name}
+        className="border border-slate-200 rounded-xl p-3 bg-slate-50"
+      >
+        <div className="flex items-center justify-between">
+
+          <div>
+            <p className="font-bold text-slate-900">
+              {station.name}
+            </p>
+
+            <p className="text-xs text-slate-500">
+              NCRs: {station.openNCRs} | RFIs: {station.openRFIs} | Punches: {station.openPunches}
+            </p>
+          </div>
+
+          <div className="text-right">
+            <p className="text-xs text-slate-500">
+              Risk Score
+            </p>
+
+            <p className="text-xl font-extrabold text-red-600">
+              {station.riskScore}
+            </p>
+          </div>
+
+        </div>
+      </div>
+    ))}
+
+  </div>
+
+</div>
+
 {topObservationStation && (
   <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
 
@@ -671,6 +746,194 @@ return (
     <pre className="whitespace-pre-wrap text-sm text-slate-700">
       {engineeringSummary}
     </pre>
+  </div>
+
+</div>
+
+<div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+  <h3 className="text-lg font-bold text-slate-900">
+    Executive Project Summary
+  </h3>
+
+  <p className="text-xs text-slate-500 mt-1 mb-4">
+    Real-time project analytics overview
+  </p>
+
+  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+
+    <ul className="space-y-2 text-sm text-slate-700">
+
+      <li>
+        Total Project Records: <strong>{totalDataRecords}</strong>
+      </li>
+
+      <li>
+        Open Action Items: <strong>{totalOpenActionItems}</strong>
+      </li>
+
+      <li>
+        Closed Action Items: <strong>{totalClosedActionItems}</strong>
+      </li>
+
+      <li>
+        Engineering Health Score: <strong>{engineeringHealthScore}%</strong>
+      </li>
+
+      <li>
+        Delayed Tasks: <strong>{delayedTasksTotal}</strong>
+      </li>
+
+      <li>
+        Open RFIs: <strong>{openRfisCount}</strong>
+      </li>
+
+      <li>
+        Open NCRs: <strong>{openNcrsCount}</strong>
+      </li>
+
+      <li>
+        Open Punches: <strong>{openPunchesCount}</strong>
+      </li>
+
+    </ul>
+
+  </div>
+
+</div>
+
+{highestRiskStation && (
+  <div className="bg-white border border-slate-200 rounded-2xl p-4 mb-6">
+
+    <h3 className="text-lg font-bold text-slate-900">
+      Top Risk Station
+    </h3>
+
+    <p className="text-xs text-slate-500 mt-1 mb-4">
+      Station with the highest calculated risk score
+    </p>
+
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+      <div>
+        <p className="text-xs text-slate-500">
+          Station
+        </p>
+
+        <p className="font-bold text-slate-900">
+          {highestRiskStation.name}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs text-slate-500">
+          Risk Score
+        </p>
+
+        <p className="font-bold text-red-600">
+          {highestRiskStation.riskScore}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs text-slate-500">
+          Open NCRs
+        </p>
+
+        <p className="font-bold">
+          {highestRiskStation.openNCRs}
+        </p>
+      </div>
+
+      <div>
+        <p className="text-xs text-slate-500">
+          Open RFIs
+        </p>
+
+        <p className="font-bold">
+          {highestRiskStation.openRFIs}
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+)}
+
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white border border-slate-200 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 font-bold uppercase">
+      Total Data Records
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2">
+      {totalDataRecords}
+    </h3>
+  </div>
+
+  <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+    <p className="text-xs text-red-600 font-bold uppercase">
+      Open Action Items
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-red-600">
+      {totalOpenActionItems}
+    </h3>
+  </div>
+
+  <div className="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+    <p className="text-xs text-emerald-600 font-bold uppercase">
+      Closed Action Items
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-emerald-600">
+      {totalClosedActionItems}
+    </h3>
+  </div>
+
+</div>
+
+<div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+
+  <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+    <p className="text-xs text-blue-600 font-bold uppercase">
+      Open RFIs
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-blue-600">
+      {openRfisCount}
+    </h3>
+  </div>
+
+  <div className="bg-orange-50 border border-orange-100 rounded-2xl p-4">
+    <p className="text-xs text-orange-600 font-bold uppercase">
+      Open NCRs
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-orange-600">
+      {openNcrsCount}
+    </h3>
+  </div>
+
+  <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+    <p className="text-xs text-purple-600 font-bold uppercase">
+      Open Punches
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-purple-600">
+      {openPunchesCount}
+    </h3>
+  </div>
+
+  <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+    <p className="text-xs text-amber-600 font-bold uppercase">
+      Delayed Tasks
+    </p>
+
+    <h3 className="text-3xl font-extrabold mt-2 text-amber-600">
+      {delayedTasksTotal}
+    </h3>
   </div>
 
 </div>
