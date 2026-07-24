@@ -202,12 +202,18 @@ const closureRate =
       )
     : 0;
 
+const ifcDrawings = drawings.filter(
+  item => item.status === 'IFC'
+).length;
 
-  const openRfis = rfis.filter(item => item.status === 'Open').length;
-  const openNcrs = ncrs.filter(item => item.status === 'Open').length;
-  const openPunches = punches.filter(item => item.status === 'Open').length;
+const underReviewDrawings = drawings.filter(
+  item => item.status === 'Under Review'
+).length;
 
-  const ifcDrawings = drawings.filter(item => item.status === 'IFC').length;
+const supersededDrawings = drawings.filter(
+  item => item.status === 'Superseded'
+).length;
+
 const drawingRiskIndex =
   drawings.length > 0
     ? Math.round(
@@ -221,8 +227,6 @@ const documentCoverage =
   documents.length +
   drawings.length;
 
-  const underReviewDrawings = drawings.filter(item => item.status === 'Under Review').length;
-  const supersededDrawings = drawings.filter(item => item.status === 'Superseded').length;
 
   const totalRecords =
     observations.length +
