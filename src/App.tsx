@@ -14,6 +14,7 @@ import DocumentControl from './components/DocumentControl';
 import Observations from './components/Observations';
 import DrawingAnalysis from './components/DrawingAnalysis';
 import ReportsCenter from './components/ReportsCenter';
+import Dashboard from './components/Dashboard';
 
 // Icons
 import { 
@@ -392,16 +393,23 @@ const sidebarItems = [
             <p className="text-xs text-slate-400 font-mono uppercase tracking-widest">Loading Project Vault...</p>
           </div>
         ) : (
-          <div className="animate-fadeIn">
-            {activeTab === 'dashboard' && (
-              <Dashboard 
-                stations={stations}
-                rfis={rfis}
-                ncrs={ncrs}
-                punches={punches}
-                onSelectStation={navigateToStation}
-              />
-            )}
+     
+  <div className="animate-fadeIn">
+
+    {activeTab === 'dashboard' && (
+      <>
+        <DashboardAnalytics />
+
+        <Dashboard
+          stations={stations}
+          rfis={rfis}
+          ncrs={ncrs}
+          punches={punches}
+          onSelectStation={navigateToStation}
+        />
+      </>
+    )}
+
 
             {activeTab === 'station' && activeStation && (
               <StationExplorer 
