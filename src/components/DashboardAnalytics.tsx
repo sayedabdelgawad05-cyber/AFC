@@ -241,6 +241,39 @@ const topDisciplines = Object.entries(disciplineCounts)
             ))
           )}
 
+<div className="bg-white border border-slate-200 rounded-3xl p-6">
+
+  <h3 className="text-lg font-bold text-slate-900 mb-4">
+    Top Disciplines
+  </h3>
+
+  <div className="space-y-3">
+
+    {topDisciplines.length === 0 ? (
+      <p className="text-sm text-slate-500">
+        No discipline analytics available.
+      </p>
+    ) : (
+      topDisciplines.map(([discipline, count]) => (
+        <div
+          key={discipline}
+          className="flex items-center justify-between border border-slate-200 rounded-xl p-3"
+        >
+          <span className="font-semibold">
+            {discipline}
+          </span>
+
+          <span className="font-bold text-cyan-600">
+            {count}
+          </span>
+        </div>
+      ))
+    )}
+
+  </div>
+
+</div>
+
         </div>
 
       </div>
