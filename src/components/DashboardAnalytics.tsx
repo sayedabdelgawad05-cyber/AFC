@@ -92,6 +92,19 @@ export default function DashboardAnalytics() {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5);
 
+const disciplineCounts: Record<string, number> = {};
+
+observations.forEach(item => {
+  const discipline = item.discipline || 'Unknown';
+
+  disciplineCounts[discipline] =
+    (disciplineCounts[discipline] || 0) + 1;
+});
+
+const topDisciplines = Object.entries(disciplineCounts)
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 5);
+
   return (
     <div className="space-y-6">
 
