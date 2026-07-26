@@ -5,6 +5,7 @@ import { api, isOnline } from './lib/api';
 // Subcomponents
 import LoginScreen from './components/LoginScreen';
 import Dashboard from './components/Dashboard';
+import DashboardAnalytics from './components/DashboardAnalytics';
 import StationExplorer from './components/StationExplorer';
 import ReportCreator from './components/ReportCreator';
 import ReportsArchive from './components/ReportsArchive';
@@ -14,7 +15,7 @@ import DocumentControl from './components/DocumentControl';
 import Observations from './components/Observations';
 import DrawingAnalysis from './components/DrawingAnalysis';
 import ReportsCenter from './components/ReportsCenter';
-import Dashboard from './components/Dashboard';
+
 
 // Icons
 import { 
