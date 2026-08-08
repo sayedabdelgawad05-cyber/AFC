@@ -1,0 +1,169 @@
+project:
+  name: Egypt HSR Integrated Engineering Platform
+  owner: Sayed Abdelgawad
+  company: Siemens Mobility
+  version: 2.0
+
+description:
+  Central platform for managing Egypt High Speed Rail engineering,
+  AFC systems, risk management, safety management,
+  V&V activities, document control, drawing control,
+  track assets, power assets, telecom assets and depot assets.
+
+modules:
+
+  active:
+
+    - Dashboard
+    - Dashboard Analytics
+    - Station Explorer
+    - Observations
+    - Reports Center
+    - Reports Archive
+    - Report Creator
+    - Document Control
+    - Drawing Analysis
+    - Risk Management
+    - Safety Management
+    - Verification and Validation
+
+  planned:
+
+    - Infrastructure Assets
+    - Depot Management
+    - OCS Management
+    - Track Management
+    - Power Supply Management
+    - Telecom Management
+    - GIS Asset Register
+
+assets:
+
+  stations:
+    count: 22
+
+  depots:
+    items:
+      - Sokhna Depot
+      - West Cairo Depot
+      - Alexandria Depot
+
+  power_supply:
+    items:
+      - TSS
+      - SP
+      - PP
+
+  telecom:
+    items:
+      - GSM-R Tower
+      - GSM-S Tower
+      - Radio Site
+
+  ocs:
+    items:
+      - Pole
+      - Portal
+      - Cantilever
+      - Foundation
+
+  track:
+    items:
+      - Turnout
+      - Crossing
+      - Track Section
+
+  depot:
+    items:
+      - Workshop
+      - Train Wash
+      - Warehouse
+      - Spare Parts Store
+      - Maintenance Building
+      - Control Center
+
+common_fields:
+
+  - Asset ID
+  - Asset Type
+  - Station
+  - KM
+  - Latitude
+  - Longitude
+  - Status
+  - Owner
+  - Last Inspection
+  - Drawing Reference
+  - Photo
+  - Remarks
+
+risk_management:
+
+  formula:
+    score: probability * impact
+
+  levels:
+
+    low:
+      from: 1
+      to: 5
+
+    medium:
+      from: 6
+      to: 12
+
+    high:
+      from: 13
+      to: 19
+
+    critical:
+      from: 20
+      to: 25
+
+safety_categories:
+
+  - PPE
+  - Working At Height
+  - Electrical Safety
+  - Fire Safety
+  - Lifting Operations
+  - Housekeeping
+  - Excavation
+  - Public Safety
+
+vv:
+
+  verification:
+    - Drawing Review
+    - Design Review
+    - Material Approval
+
+  validation:
+    - FAT
+    - SAT
+    - Site Inspection
+    - Integration Test
+
+gis:
+
+  mandatory:
+    - Latitude
+    - Longitude
+
+  future_features:
+    - Google Maps Integration
+    - Asset Mapping
+    - Pole Mapping
+    - Turnout Mapping
+    - GSM-R Tower Mapping
+    - TSS Mapping
+    - Depot Mapping
+
+development_rules:
+
+  - Every asset shall have GPS coordinates
+  - Every record shall support attachments
+  - Every module shall support export to Excel
+  - Every module shall support filters
+  - Every module shall support search
+  - Dashboard shall provide executive summary
