@@ -15,6 +15,7 @@ import DocumentControl from './components/DocumentControl';
 import Observations from './components/Observations';
 import DrawingAnalysis from './components/DrawingAnalysis';
 import ReportsCenter from './components/ReportsCenter';
+import RiskSafetyManagement from './components/RiskSafetyManagement';
 
 
 // Icons
@@ -47,6 +48,7 @@ type NavTab =
   | 'observations'
   | 'drawings'
   | 'reports'
+  | 'risk-safety'
   | 'admin';
 
 export default function App() {
@@ -263,6 +265,7 @@ const sidebarItems = [
   { id: 'archive', label: 'Reports Archive', icon: History },
   { id: 'observations', label: 'Observations', icon: FileText },
   { id: 'documents', label: 'Document Control', icon: FileText },
+  { id: 'risk-safety', label: 'Risk & Safety', icon: ShieldAlert },
   { id: 'assistant', label: 'Engineering AI', icon: MessageSquare },
   { id: 'drawings', label: 'Drawing Analysis', icon: FileText },
     { id: 'reports', label: 'Reports Center', icon: FileText },
@@ -613,6 +616,17 @@ const sidebarItems = [
 
 {activeTab === 'documents' && (
   <DocumentControl />
+)}
+
+{activeTab === 'risk-safety' && (
+  <RiskSafetyManagement />
+)}
+
+{activeTab === 'assistant' && (
+  <AIAssistant 
+    stations={stations}
+    activeStationId={activeStationId}
+  />
 )}
             {activeTab === 'assistant' && (
               <AIAssistant 

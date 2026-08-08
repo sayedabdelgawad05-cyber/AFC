@@ -29,6 +29,33 @@ export default function Dashboard({
   const observations = safeParse('hsr_observations');
   const drawings = safeParse('hsr_drawings');
 
+const riskRegister = safeParse('hsr_risk_register');
+const safetyRegister = safeParse('hsr_safety_register');
+const vvRegister = safeParse('hsr_vv_register');
+
+const openRisks = riskRegister.filter((item: any) => item.status === 'Open').length;
+const mitigatedRisks = riskRegister.filter((item: any) => item.status === 'Mitigated').length;
+const closedRisks = riskRegister.filter((item: any) => item.status === 'Closed').length;
+
+const highRisks = riskRegister.filter(
+  (item: any) => Number(item.probability || 0) * Number(item.impact || 0) >= 13
+).length;
+
+const criticalRisks = riskRegister.filter(
+  (item: any) => Number(item.probability || 0) * Number(item.impact || 0) >= 20
+).length;
+
+const openSafetyIssues = safetyRegister.filter((item: any) => item.status === 'Open').length;
+const closedSafetyIssues = safetyRegister.filter((item: any) => item.status === 'Closed').length;
+const criticalSafetyIssues = safetyRegister.filter((item: any) => item.severity === 'Critical').length;
+
+const totalVVItems = vvRegister.length;
+const verifiedVVItems = vvRegister.filter((item: any) => item.verification === 'Verified').length;
+const validatedVVItems = vvRegister.filter((item: any) => item.validation === 'Validated').length;
+const failedVVItems = vvRegister.filter(
+  (item: any) => item.verification === 'Failed' || item.validation === 'Failed'
+).length;
+
   const totalStations = stations.length;
 
   const avgProgress =
@@ -85,13 +112,17 @@ export default function Dashboard({
     (item: any) => item.status === 'Superseded'
   ).length;
 
-  const totalDataRecords =
-    totalDocuments +
-    observations.length +
-    rfis.length +
-    ncrs.length +
-    punches.length +
-    drawings.length;
+const totalDataRecords =
+  totalDocuments +
+  observations.length +
+  rfis.length +
+  ncrs.length +
+  punches.length +
+  drawings.length +
+  riskRegister.length +
+  safetyRegister.length +
+  vvRegister.length;
+
 
   const totalOpenActionItems =
     openObservations + openRfisCount + openNcrsCount + openPunchesCount;
@@ -227,6 +258,18 @@ export default function Dashboard({
     recommendedActions.push('Review delayed tasks and update target dates.');
   }
 
+if (criticalRisks > 0) {
+  recommendedActions.push('Review critical project risks and assign mitigation owners.');
+}
+
+if (openSafetyIssues > 0) {
+  recommendedActions.push('Close open safety observations before continuing affected site activities.');
+}
+
+if (failedVVItems > 0) {
+  recommendedActions.push('Review failed V&V items and define corrective actions.');
+}
+
   if (mostRepeatedObservation) {
     recommendedActions.push(`Resolve repeated issue pattern: ${mostRepeatedObservation[0]}.`);
   }
@@ -325,6 +368,123 @@ export default function Dashboard({
           </table>
         </div>
       </div>
+
+<div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+  <div className="bg-red-950 px-5 py-4">
+    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+      <div>
+        <h3 className="text-lg font-extrabold text-white">
+          Risk, Safety and V&V Summary
+        </h3>
+        <p className="text-sm text-red-100 mt-1">
+          Project assurance overview for safety management, risk control, verification and validation
+        </p>
+      </div>
+
+      <div className="bg-red-500/10 border border-red-300/30 text-red-200 px-3 py-2 rounded-lg text-xs font-bold">
+        Assurance Register
+      </div>
+    </div>
+  </div>
+
+  <div className="overflow-x-auto">
+    <table className="min-w-full text-sm border-collapse">
+      <tbody>
+        <tr className="bg-slate-100">
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Open Risks
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-red-700">
+            {openRisks}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            High Risks
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-orange-700">
+            {highRisks}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Critical Risks
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-red-800">
+            {criticalRisks}
+          </td>
+        </tr>
+
+        <tr>
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Open Safety Issues
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-red-700">
+            {openSafetyIssues}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Critical Safety Issues
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-red-800">
+            {criticalSafetyIssues}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Closed Safety Issues
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-emerald-700">
+            {closedSafetyIssues}
+          </td>
+        </tr>
+
+        <tr className="bg-slate-50">
+          <th className="text-left px-4 py-3 border border-slate-200">
+            V&V Items
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-blue-700">
+            {totalVVItems}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Verified
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-blue-700">
+            {verifiedVVItems}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Validated
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-emerald-700">
+            {validatedVVItems}
+          </td>
+        </tr>
+
+        <tr>
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Failed V&V
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-red-700">
+            {failedVVItems}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Mitigated Risks
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-blue-700">
+            {mitigatedRisks}
+          </td>
+
+          <th className="text-left px-4 py-3 border border-slate-200">
+            Closed Risks
+          </th>
+          <td className="px-4 py-3 border border-slate-200 font-bold text-emerald-700">
+            {closedRisks}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-5">
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
